@@ -23,7 +23,6 @@ import org.gradle.initialization.BuildLoader;
 import org.gradle.initialization.DependenciesAccessors;
 import org.gradle.initialization.buildsrc.BuildSourceBuilder;
 import org.gradle.internal.build.BuildStateRegistry;
-import org.gradle.internal.classpath.ClassPath;
 import org.gradle.internal.management.DependencyResolutionManagementInternal;
 import org.gradle.internal.service.ServiceRegistry;
 
@@ -32,14 +31,12 @@ import java.io.File;
 public class BuildTreePreparingProjectsPreparer implements ProjectsPreparer {
     private final ProjectsPreparer delegate;
     private final BuildStateRegistry buildStateRegistry;
-    private final BuildSourceBuilder buildSourceBuilder;
     private final BuildLoader buildLoader;
 
     public BuildTreePreparingProjectsPreparer(ProjectsPreparer delegate, BuildLoader buildLoader, BuildStateRegistry buildStateRegistry, BuildSourceBuilder buildSourceBuilder) {
         this.delegate = delegate;
         this.buildLoader = buildLoader;
         this.buildStateRegistry = buildStateRegistry;
-        this.buildSourceBuilder = buildSourceBuilder;
     }
 
     @Override
@@ -47,17 +44,17 @@ public class BuildTreePreparingProjectsPreparer implements ProjectsPreparer {
         // Setup classloader for root project, all other projects will be derived from this.
         SettingsInternal settings = gradle.getSettings();
         ClassLoaderScope parentClassLoaderScope = settings.getClassLoaderScope();
-        ClassLoaderScope baseProjectClassLoaderScope = parentClassLoaderScope.createChild(settings.getBuildSrcDir().getAbsolutePath());
-        gradle.setBaseProjectClassLoaderScope(baseProjectClassLoaderScope);
+        ClassLoaderScope baseProjectClassLoaderScope = parentClassLoaderScope.createChild("dm-accessors");
         generateDependenciesAccessorsAndAssignPluginVersions(gradle.getServices(), settings, baseProjectClassLoaderScope);
+        gradle.setBaseProjectClassLoaderScope(baseProjectClassLoaderScope.lock());
+
         // attaches root project
         buildLoader.load(gradle.getSettings(), gradle);
+
         // Makes included build substitutions available
         if (gradle.isRootBuild()) {
             buildStateRegistry.beforeConfigureRootBuild();
         }
-        // Build buildSrc and export classpath to root project
-        buildBuildSrcAndLockClassloader(gradle, baseProjectClassLoaderScope);
 
         delegate.prepareProjects(gradle);
 
@@ -65,11 +62,6 @@ public class BuildTreePreparingProjectsPreparer implements ProjectsPreparer {
         if (gradle.isRootBuild()) {
             buildStateRegistry.afterConfigureRootBuild();
         }
-    }
-
-    private void buildBuildSrcAndLockClassloader(GradleInternal gradle, ClassLoaderScope baseProjectClassLoaderScope) {
-        ClassPath buildSrcClassPath = buildSourceBuilder.buildAndGetClassPath(gradle);
-        baseProjectClassLoaderScope.export(buildSrcClassPath).lock();
     }
 
     private void generateDependenciesAccessorsAndAssignPluginVersions(ServiceRegistry services, SettingsInternal settings, ClassLoaderScope classLoaderScope) {

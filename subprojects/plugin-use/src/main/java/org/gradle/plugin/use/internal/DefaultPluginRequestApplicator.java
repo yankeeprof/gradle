@@ -101,6 +101,11 @@ public class DefaultPluginRequestApplicator implements PluginRequestApplicator {
                             }
 
                             @Override
+                            public void addLegacyBuildSrc(Object dependencyNotation) {
+                                scriptHandler.addScriptClassPathDependency(dependencyNotation);
+                            }
+
+                            @Override
                             public void add(PluginImplementation<?> plugin) {
                                 pluginImpls.put(result, plugin);
                             }

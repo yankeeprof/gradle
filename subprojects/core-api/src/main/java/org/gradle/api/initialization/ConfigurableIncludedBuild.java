@@ -19,6 +19,7 @@ package org.gradle.api.initialization;
 import org.gradle.api.Action;
 import org.gradle.api.Incubating;
 import org.gradle.api.artifacts.DependencySubstitutions;
+import org.gradle.api.initialization.definition.InjectedPluginDependencies;
 
 /**
  * A build that is to be included in the composite.
@@ -46,4 +47,13 @@ public interface ConfigurableIncludedBuild extends IncludedBuild {
      * @see DependencySubstitutions
      */
     void dependencySubstitution(Action<? super DependencySubstitutions> action);
+
+    /**
+     * Configure injected plugins into this build.
+     *
+     * @param configuration the configuration action for adding injected plugins
+     * @since 6.8
+     */
+    @Incubating
+    void plugins(Action<? super InjectedPluginDependencies> configuration);
 }

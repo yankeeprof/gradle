@@ -185,7 +185,7 @@ public class DefaultIncludedBuildRegistry implements BuildStateRegistry, Stoppab
         if (!SettingsInternal.BUILD_SRC.equals(buildDefinition.getName())) {
             throw new IllegalStateException("Expected buildSrc build, got: " + buildDefinition.getName());
         }
-        Path identityPath = assignPath(owner, buildDefinition.getName(), buildDefinition.getBuildRootDir());
+        Path identityPath = assignPath(owner.getIdentityPath().append(Path.path(buildDefinition.getName())), buildDefinition.getName(), buildDefinition.getBuildRootDir());
         BuildIdentifier buildIdentifier = idFor(buildDefinition.getName());
         DefaultNestedBuild build = new DefaultNestedBuild(buildIdentifier, identityPath, buildDefinition, owner);
         addBuild(build);
@@ -199,19 +199,12 @@ public class DefaultIncludedBuildRegistry implements BuildStateRegistry, Stoppab
         }
         File dir = buildDefinition.getStartParameter().getCurrentDir();
         String name = MoreObjects.firstNonNull(buildName, dir.getName());
-        validateNameIsNotBuildSrc(name, dir);
-        Path identityPath = assignPath(owner, name, dir);
+        Path identityPath = assignPath(owner.getIdentityPath().append(Path.path(name)), name, dir);
         BuildIdentifier buildIdentifier = idFor(name);
         RootOfNestedBuildTree rootOfNestedBuildTree = new RootOfNestedBuildTree(buildDefinition, buildIdentifier, identityPath, owner);
         // Attach the build only after it has been fully constructed.
         rootOfNestedBuildTree.attach();
         return rootOfNestedBuildTree;
-    }
-
-    private void validateNameIsNotBuildSrc(String name, File dir) {
-        if (SettingsInternal.BUILD_SRC.equals(name)) {
-            throw new GradleException("Included build " + dir + " has build name 'buildSrc' which cannot be used as it is a reserved name.");
-        }
     }
 
     private IncludedBuildState registerBuild(BuildDefinition buildDefinition, boolean isImplicit) {
@@ -237,8 +230,14 @@ public class DefaultIncludedBuildRegistry implements BuildStateRegistry, Stoppab
             if (buildName == null) {
                 throw new IllegalStateException("build name is required");
             }
-            validateNameIsNotBuildSrc(buildName, buildDir);
-            Path idPath = assignPath(rootBuild, buildDefinition.getName(), buildDir);
+            Path idPath;
+            if (buildDefinition.getName().equals(SettingsInternal.BUILD_SRC)) {
+                Path requestedPath = buildDefinition.getFromBuild().getBuildPath().append(Path.path(buildName));
+                idPath = assignPath(requestedPath, buildName, buildDir);
+            } else {
+                idPath = assignPath(rootBuild.getIdentityPath().append(Path.path(buildName)), buildName, buildDir);
+            }
+
             BuildIdentifier buildIdentifier = idFor(buildName);
 
             includedBuild = includedBuildFactory.createBuild(buildIdentifier, idPath, buildDefinition, isImplicit, rootBuild);
@@ -265,8 +264,7 @@ public class DefaultIncludedBuildRegistry implements BuildStateRegistry, Stoppab
         return buildIdentifier;
     }
 
-    private Path assignPath(BuildState owner, String name, File dir) {
-        Path requestedPath = owner.getIdentityPath().append(Path.path(name));
+    private Path assignPath(Path requestedPath, String name, File dir) {
         File existingForPath = includedBuildDirectoriesByPath.putIfAbsent(requestedPath, dir);
         if (existingForPath != null) {
             throw new GradleException("Included build " + dir + " has build path " + requestedPath + " which is the same as included build " + existingForPath);

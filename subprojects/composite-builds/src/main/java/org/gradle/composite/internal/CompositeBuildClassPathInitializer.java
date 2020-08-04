@@ -21,6 +21,7 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.component.BuildIdentifier;
 import org.gradle.api.artifacts.component.ComponentArtifactIdentifier;
 import org.gradle.api.artifacts.result.ResolvedArtifactResult;
+import org.gradle.api.internal.SettingsInternal;
 import org.gradle.api.internal.initialization.ScriptClassPathInitializer;
 import org.gradle.execution.MultipleBuildFailures;
 import org.gradle.internal.build.BuildState;
@@ -61,10 +62,16 @@ public class CompositeBuildClassPathInitializer implements ScriptClassPathInitia
             CompositeProjectComponentArtifactMetadata compositeBuildArtifact = (CompositeProjectComponentArtifactMetadata) artifact;
             BuildIdentifier targetBuild = compositeBuildArtifact.getComponentId().getBuild();
             assert !requestingBuild.equals(targetBuild);
-            Set<? extends Task> tasks = compositeBuildArtifact.getBuildDependencies().getDependencies(null);
-            for (Task task : tasks) {
-                includedBuildTaskGraph.addTask(requestingBuild, targetBuild, task.getPath());
+
+            if (targetBuild.getName().equals(SettingsInternal.BUILD_SRC)) {
+                includedBuildTaskGraph.addTask(requestingBuild, targetBuild, "build");
+            } else {
+                Set<? extends Task> tasks = compositeBuildArtifact.getBuildDependencies().getDependencies(null);
+                for (Task task : tasks) {
+                    includedBuildTaskGraph.addTask(requestingBuild, targetBuild, task.getPath());
+                }
             }
+
             found = true;
         }
         return found;

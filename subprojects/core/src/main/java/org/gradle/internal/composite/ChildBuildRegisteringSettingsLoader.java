@@ -20,13 +20,14 @@ import org.gradle.api.initialization.IncludedBuild;
 import org.gradle.api.internal.BuildDefinition;
 import org.gradle.api.internal.GradleInternal;
 import org.gradle.api.internal.SettingsInternal;
+import org.gradle.initialization.DefaultSettings;
 import org.gradle.initialization.IncludedBuildSpec;
 import org.gradle.initialization.SettingsLoader;
+import org.gradle.initialization.definition.InjectedPluginResolver;
 import org.gradle.internal.build.BuildStateRegistry;
 import org.gradle.internal.build.IncludedBuildState;
 import org.gradle.internal.build.PublicBuildPath;
 import org.gradle.internal.reflect.Instantiator;
-import org.gradle.plugin.management.internal.PluginRequests;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -51,8 +52,16 @@ public class ChildBuildRegisteringSettingsLoader implements SettingsLoader {
     public SettingsInternal findAndLoadSettings(GradleInternal gradle) {
         SettingsInternal settings = delegate.findAndLoadSettings(gradle);
 
+        if (settings.getBuildSrcDir().exists()) {
+            // TODO: Disallow someone from adding buildSrc explicitly for now
+            settings.includeBuild(DefaultSettings.BUILD_SRC, buildSrc -> {
+                buildSrc.plugins(injectedPluginDependencies -> injectedPluginDependencies.id("org.gradle.buildsrc"));
+            });
+        }
+
         // Add included builds defined in settings
         List<IncludedBuildSpec> includedBuilds = settings.getIncludedBuilds();
+
         if (!includedBuilds.isEmpty()) {
             Set<IncludedBuild> children = new LinkedHashSet<>(includedBuilds.size());
             for (IncludedBuildSpec includedBuildSpec : includedBuilds) {
@@ -74,18 +83,20 @@ public class ChildBuildRegisteringSettingsLoader implements SettingsLoader {
     }
 
     private IncludedBuildState addIncludedBuild(IncludedBuildSpec includedBuildSpec, GradleInternal gradle) {
+        InjectedPluginResolver resolver = new InjectedPluginResolver();
+
         gradle.getOwner().assertCanAdd(includedBuildSpec);
 
         DefaultConfigurableIncludedBuild configurable = instantiator.newInstance(DefaultConfigurableIncludedBuild.class, includedBuildSpec.rootDir);
         includedBuildSpec.configurer.execute(configurable);
 
         BuildDefinition buildDefinition = BuildDefinition.fromStartParameterForBuild(
-            gradle.getStartParameter(),
-            configurable.getName(),
-            includedBuildSpec.rootDir,
-            PluginRequests.EMPTY,
-            configurable.getDependencySubstitutionAction(),
-            publicBuildPath
+                gradle.getStartParameter(),
+                configurable.getName(),
+                includedBuildSpec.rootDir,
+                resolver.resolveAll(configurable.getInjectedPlugins()),
+                configurable.getDependencySubstitutionAction(),
+                publicBuildPath
         );
 
         return buildRegistry.addIncludedBuild(buildDefinition);

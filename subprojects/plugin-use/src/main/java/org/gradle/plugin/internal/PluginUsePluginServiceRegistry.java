@@ -31,6 +31,8 @@ import org.gradle.api.internal.plugins.PluginInspector;
 import org.gradle.api.internal.plugins.PluginRegistry;
 import org.gradle.initialization.ClassLoaderScopeRegistry;
 import org.gradle.internal.Factory;
+import org.gradle.internal.build.BuildState;
+import org.gradle.internal.build.BuildStateRegistry;
 import org.gradle.internal.classpath.CachedClasspathTransformer;
 import org.gradle.internal.event.ListenerManager;
 import org.gradle.internal.reflect.Instantiator;
@@ -90,8 +92,10 @@ public class PluginUsePluginServiceRegistry extends AbstractPluginServiceRegistr
                                                           ClientInjectedClasspathPluginResolver injectedClasspathPluginResolver,
                                                           PluginDependencyResolutionServices dependencyResolutionServices,
                                                           List<PluginResolverContributor> pluginResolverContributors,
+                                                          BuildStateRegistry buildStateRegistry,
+                                                          BuildState consumingBuild,
                                                           VersionSelectorScheme versionSelectorScheme) {
-            return new PluginResolverFactory(pluginRegistry, documentationRegistry, injectedClasspathPluginResolver, dependencyResolutionServices, pluginResolverContributors, versionSelectorScheme);
+            return new PluginResolverFactory(pluginRegistry, documentationRegistry, injectedClasspathPluginResolver, dependencyResolutionServices, pluginResolverContributors, buildStateRegistry, consumingBuild, versionSelectorScheme);
         }
 
         PluginRequestApplicator createPluginRequestApplicator(PluginRegistry pluginRegistry, PluginDependencyResolutionServices dependencyResolutionServices,

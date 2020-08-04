@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package org.gradle.plugin.use.resolve.internal;
+package org.gradle.initialization.buildsrc;
 
-import org.gradle.api.internal.plugins.PluginImplementation;
-import org.gradle.plugin.use.PluginId;
+import org.gradle.api.Plugin;
+import org.gradle.api.initialization.Settings;
 
-public interface PluginResolveContext {
-    void addLegacy(PluginId pluginId, Object dependencyNotation);
-
-    void addLegacyBuildSrc(Object dependencyNotation);
-
-    void add(PluginImplementation<?> plugin);
-
-    void addFromDifferentLoader(PluginImplementation<?> plugin);
+public class BuildSrcPlugin implements Plugin<Settings> {
+    @Override
+    public void apply(Settings settings) {
+        settings.getGradle().settingsEvaluated(s -> {
+            s.getGradle().rootProject(rootProject -> rootProject.getPluginManager().apply("org.gradle.buildsrc-root-project"));
+        });
+    }
 }

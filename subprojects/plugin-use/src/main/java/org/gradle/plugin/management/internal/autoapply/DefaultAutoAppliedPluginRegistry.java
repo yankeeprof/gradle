@@ -29,6 +29,7 @@ import org.gradle.api.invocation.Gradle;
 import org.gradle.plugin.management.internal.DefaultPluginRequest;
 import org.gradle.plugin.management.internal.PluginRequestInternal;
 import org.gradle.plugin.management.internal.PluginRequests;
+import org.gradle.plugin.use.resolve.internal.BuildSrcPluginResolver;
 
 import static org.gradle.initialization.StartParameterBuildOptions.BuildScanOption;
 
@@ -47,6 +48,9 @@ public class DefaultAutoAppliedPluginRegistry implements AutoAppliedPluginRegist
 
     @Override
     public PluginRequests getAutoAppliedPlugins(Project target) {
+        if (target == target.getRootProject()) {
+            return PluginRequests.of(new DefaultPluginRequest(BuildSrcPluginResolver.BUILDSRC_INTERNAL.getId(), "", true, null, "injected buildSrc plugins"));
+        }
         return PluginRequests.EMPTY;
     }
 

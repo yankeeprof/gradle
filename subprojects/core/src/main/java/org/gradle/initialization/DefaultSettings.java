@@ -100,6 +100,7 @@ public abstract class DefaultSettings extends AbstractPluginAware implements Set
         return drm;
     }
 
+
     @Override
     public String toString() {
         return "settings '" + rootProjectDescriptor.getName() + "'";
