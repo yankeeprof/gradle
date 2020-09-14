@@ -90,10 +90,10 @@ dependencies {
     }
     testImplementation(project(":plugins"))
     testImplementation(project(":version-control"))
+    testImplementation(testFixtures(project(":core")))
     testImplementation(libs.ant)
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.jacksonKotlin)
-
     testImplementation(libs.archunit)
     testImplementation(libs.kotlinCoroutines)
     testImplementation(libs.awaitility)

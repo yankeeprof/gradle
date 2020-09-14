@@ -71,6 +71,7 @@ import org.gradle.internal.work.WorkerLeaseService;
 import org.gradle.invocation.DefaultGradle;
 import org.gradle.util.Path;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.util.Collections;
 import java.util.Set;
@@ -99,8 +100,8 @@ public class ProjectBuilderImpl {
         return project;
     }
 
-    public Project createProject(String name, File inputProjectDir, File gradleUserHomeDir) {
-        File projectDir = prepareProjectDir(inputProjectDir);
+    public Project createProject(String name, @Nullable File inputProjectDir, File gradleUserHomeDir) {
+        final File projectDir = prepareProjectDir(inputProjectDir);
 
         final File homeDir = new File(projectDir, "gradleHome");
 
@@ -188,9 +189,9 @@ public class ProjectBuilderImpl {
         return globalServices;
     }
 
-    public File prepareProjectDir(File projectDir) {
+    public File prepareProjectDir(@Nullable File projectDir) {
         if (projectDir == null) {
-            TemporaryFileProvider temporaryFileProvider = new TmpDirTemporaryFileProvider();
+            TemporaryFileProvider temporaryFileProvider = TmpDirTemporaryFileProvider.createLegacy();
             projectDir = temporaryFileProvider.createTemporaryDirectory("gradle", "projectDir");
             // TODO deleteOnExit won't clean up non-empty directories (and it leaks memory for long-running processes).
             projectDir.deleteOnExit();

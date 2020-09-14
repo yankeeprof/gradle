@@ -22,6 +22,7 @@ import org.gradle.api.internal.file.DefaultFileLookup;
 import org.gradle.api.internal.file.FileCollectionFactory;
 import org.gradle.api.internal.file.FileLookup;
 import org.gradle.api.internal.file.FileResolver;
+import org.gradle.api.internal.file.TmpDirTemporaryFileProvider;
 import org.gradle.api.internal.file.collections.DefaultDirectoryFileTreeFactory;
 import org.gradle.api.internal.file.collections.DirectoryFileTreeFactory;
 import org.gradle.api.internal.provider.PropertyHost;
@@ -53,7 +54,6 @@ import org.gradle.internal.service.ServiceRegistration;
 import org.gradle.internal.service.scopes.Scope.Global;
 import org.gradle.process.internal.DefaultExecActionFactory;
 import org.gradle.process.internal.ExecFactory;
-import org.gradle.process.internal.ExecHandleFactory;
 
 /**
  * Defines the basic global services of a given process. This includes the Gradle CLI, daemon and tooling API provider. These services
@@ -63,6 +63,7 @@ import org.gradle.process.internal.ExecHandleFactory;
 public class BasicGlobalScopeServices {
     void configure(ServiceRegistration serviceRegistration) {
         serviceRegistration.add(DefaultFileLookup.class);
+        serviceRegistration.add(DefaultJvmMetadataDetector.Factory.class);
         serviceRegistration.addProvider(new MessagingServices());
     }
 
@@ -88,16 +89,16 @@ public class BasicGlobalScopeServices {
         return new DocumentationRegistry();
     }
 
-    JvmMetadataDetector createJvmMetadataDetector(ExecHandleFactory execHandleFactory) {
-        return new CachingJvmMetadataDetector(new DefaultJvmMetadataDetector(execHandleFactory));
+    JvmMetadataDetector createJvmMetadataDetector(DefaultJvmMetadataDetector.Factory defaultJvmMetadataDetectorFactory) {
+        return new CachingJvmMetadataDetector(defaultJvmMetadataDetectorFactory.create());
     }
 
     JvmVersionDetector createJvmVersionDetector(JvmMetadataDetector detector) {
         return new DefaultJvmVersionDetector(detector);
     }
 
-    ExecFactory createExecFactory(FileResolver fileResolver, FileCollectionFactory fileCollectionFactory, ExecutorFactory executorFactory) {
-        return DefaultExecActionFactory.of(fileResolver, fileCollectionFactory, executorFactory);
+    ExecFactory createExecFactory(FileResolver fileResolver, FileCollectionFactory fileCollectionFactory, ExecutorFactory executorFactory, TmpDirTemporaryFileProvider temporaryFileProvider) {
+        return DefaultExecActionFactory.of(fileResolver, fileCollectionFactory, executorFactory, temporaryFileProvider);
     }
 
     FileResolver createFileResolver(FileLookup lookup) {

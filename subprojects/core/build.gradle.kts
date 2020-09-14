@@ -32,6 +32,8 @@ tasks.classpathManifest {
 }
 
 dependencies {
+    api(project(":file-temp"))
+
     implementation(project(":base-services"))
     implementation(project(":base-services-groovy"))
     implementation(project(":messaging"))
@@ -102,10 +104,15 @@ dependencies {
     testFixturesApi(project(":native")) {
         because("test fixtures expose FileSystem")
     }
-    testFixturesImplementation(project(":file-collections"))
-    testFixturesImplementation(project(":native"))
-    testFixturesImplementation(project(":resources"))
-    testFixturesImplementation(project(":process-services"))
+    testFixturesApi(project(":file-collections")) {
+        because("test fixtures expose file collection types")
+    }
+    testFixturesApi(project(":resources")) {
+        because("test fixtures expose file resource types")
+    }
+    testFixturesApi(project(":process-services")) {
+        because("test fixtures expose exec handler types")
+    }
     testFixturesImplementation(project(":messaging"))
     testFixturesImplementation(project(":persistent-cache"))
     testFixturesImplementation(project(":snapshots"))
