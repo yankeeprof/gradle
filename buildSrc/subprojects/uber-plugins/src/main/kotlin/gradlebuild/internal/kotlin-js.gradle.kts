@@ -31,7 +31,7 @@ apply(from = "$rootDir/gradle/shared-with-buildSrc/code-quality-configuration.gr
 
 tasks {
     withType<Kotlin2JsCompile>().configureEach {
-        kotlinOptions.allWarningsAsErrors = true
+        // kotlinOptions.allWarningsAsErrors = true
     }
 
     withType<KtlintFormatTask>().configureEach {
