@@ -193,6 +193,8 @@ fun configureTests() {
     }
 
     tasks.withType<Test>().configureEach {
+        outputs.cacheIf { false }
+
         maxParallelForks = project.maxParallelForks
 
         if (!BuildEnvironment.isIntelliJIDEA) {
