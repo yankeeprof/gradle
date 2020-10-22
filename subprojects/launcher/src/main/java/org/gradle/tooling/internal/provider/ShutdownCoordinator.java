@@ -40,5 +40,6 @@ public class ShutdownCoordinator implements DaemonStartListener, Stoppable {
     @Override
     public void stop() {
         client.gracefulStop(daemons);
+        daemons.clear();
     }
 }
