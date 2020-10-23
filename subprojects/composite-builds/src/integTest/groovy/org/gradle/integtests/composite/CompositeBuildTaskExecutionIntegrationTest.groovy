@@ -18,6 +18,7 @@ package org.gradle.integtests.composite
 
 import groovy.transform.NotYetImplemented
 import org.gradle.integtests.fixtures.AbstractIntegrationSpec
+import spock.lang.Unroll
 
 class CompositeBuildTaskExecutionIntegrationTest extends AbstractIntegrationSpec {
 
@@ -56,7 +57,8 @@ class CompositeBuildTaskExecutionIntegrationTest extends AbstractIntegrationSpec
         succeeds(":other-build:sub:doSomething")
     }
 
-    def "selects only the exact task and ignores tasks with the same name in subprojects"() {
+    @Unroll
+    def "selects only the exact task #task and ignores tasks with the same name in subprojects"() {
         setup:
         settingsFile << "includeBuild('other-build')"
         file('other-build/settings.gradle') << """
