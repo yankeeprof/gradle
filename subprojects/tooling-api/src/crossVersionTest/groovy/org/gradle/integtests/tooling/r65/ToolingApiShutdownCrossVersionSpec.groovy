@@ -25,12 +25,10 @@ import org.gradle.tooling.GradleConnector
 import org.gradle.tooling.ProjectConnection
 import org.gradle.tooling.model.GradleProject
 import org.gradle.tooling.model.eclipse.EclipseProject
-import spock.lang.Retry
 import spock.lang.Timeout
 import spock.util.concurrent.PollingConditions
 
 @Timeout(60)
-@Retry(count = 3)
 @ToolingApiVersion(">=6.5")
 class ToolingApiShutdownCrossVersionSpec extends CancellationSpec {
 

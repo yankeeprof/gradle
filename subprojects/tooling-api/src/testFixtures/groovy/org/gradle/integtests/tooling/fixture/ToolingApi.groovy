@@ -52,6 +52,8 @@ class ToolingApi implements TestRule {
     private context = new IntegrationTestBuildContext()
 
     private final List<Closure> connectorConfigurers = []
+    private GradleConnector cachedConnector
+
     boolean verboseLogging = LOGGER.debugEnabled
 
     ToolingApi(GradleDistribution dist, TestDirectoryProvider testWorkDirProvider) {
@@ -168,6 +170,8 @@ class ToolingApi implements TestRule {
     }
 
     GradleConnector connector() {
+        assert cachedConnector == null : "Multiple connectors were created in one test"
+
         DefaultGradleConnector connector
         if (isolatedToolingClient != null) {
             connector = isolatedToolingClient.getFactory(DefaultGradleConnector).create()
@@ -209,6 +213,7 @@ class ToolingApi implements TestRule {
         connectorConfigurers.each {
             connector.with(it)
         }
+        cachedConnector = connector
         return connector
     }
 
@@ -251,6 +256,9 @@ class ToolingApi implements TestRule {
         }
         if (requireIsolatedDaemons) {
             try {
+                if (cachedConnector!=null && cachedConnector.respondsTo("disconnect")) {
+                    cachedConnector.disconnect()
+                }
                 getDaemons().killAll()
             } catch (RuntimeException ex) {
                 //TODO once we figured out why pid from logfile can be null we should remove this again
@@ -265,9 +273,13 @@ class ToolingApi implements TestRule {
             if (embedded) {
                 ConnectorServices.reset()
             } else {
+                if (cachedConnector!=null && cachedConnector.respondsTo("disconnect")) {
+                    cachedConnector.disconnect()
+                }
                 getDaemons().killAll()
             }
         }
+        cachedConnector = null
     }
 
 }
