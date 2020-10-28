@@ -276,12 +276,27 @@ class DefaultExecutionPlanParallelTest extends AbstractExecutionPlanSpec {
         Task a = task("a", type: AsyncWithOutputDirectory)
         _ * a.outputDirectory >> taskOutput
         Task b = task("b", type: AsyncWithOutputFile)
-        // Need to use new File() here, since TestFile.file() canonicalizes the result
         _ * b.outputFile >> new File(symlink, "fileUnderSymlink")
+
+        addToGraphAndPopulate(a, b)
 
         expect:
         // TODO: Should be tasksAreNotExecutedInParallel(a, b)
-        tasksAreExecutedInParallel(a, b)
+        [selectNextTask(), selectNextTask()] as Set == ([a, b] as Set)
+    }
+
+    private void tasksAreNotExecutedInParallel(Task first, Task second) {
+        addToGraphAndPopulate(first, second)
+
+        def firstTaskNode = selectNextTaskNode()
+
+        assert selectNextTask() == null
+        assert lockedProjects.empty
+
+        executionPlan.finishedExecuting(firstTaskNode)
+        def secondTask = selectNextTask()
+
+        assert [firstTaskNode.task, secondTask] as Set == [first, second] as Set
     }
 
     @ToBeImplemented("When we support symlinks in the VFS, we should implement this as well")
@@ -298,9 +313,11 @@ class DefaultExecutionPlanParallelTest extends AbstractExecutionPlanSpec {
         Task b = task("b", type: AsyncWithOutputDirectory)
         _ * b.outputDirectory >> symlink
 
+        addToGraphAndPopulate(a, b)
+
         expect:
         // TODO: Should be: tasksAreNotExecutedInParallel(a, b)
-        tasksAreExecutedInParallel(a, b)
+        [selectNextTask(), selectNextTask()] as Set == ([a, b] as Set)
 
         cleanup:
         assert symlink.delete()
@@ -320,9 +337,11 @@ class DefaultExecutionPlanParallelTest extends AbstractExecutionPlanSpec {
         Task b = task("b", type: AsyncWithLocalState)
         _ * b.localStateFile >> symlink
 
+        addToGraphAndPopulate(a, b)
+
         expect:
         // TODO: Should be: tasksAreNotExecutedInParallel(a, b)
-        tasksAreExecutedInParallel(a, b)
+        [selectNextTask(), selectNextTask()] as Set == ([a, b] as Set)
 
         cleanup:
         assert symlink.delete()
@@ -737,28 +756,6 @@ class DefaultExecutionPlanParallelTest extends AbstractExecutionPlanSpec {
         then:
         executionPlan.getNode(finalized).isSuccessful()
         executionPlan.getNode(finalizer).state == Node.ExecutionState.SKIPPED
-    }
-
-    private void tasksAreNotExecutedInParallel(Task first, Task second) {
-        addToGraphAndPopulate(first, second)
-
-        def firstTaskNode = selectNextTaskNode()
-
-        assert selectNextTask() == null
-        assert lockedProjects.empty
-
-        executionPlan.finishedExecuting(firstTaskNode)
-        def secondTask = selectNextTask()
-
-        assert [firstTaskNode.task, secondTask] as Set == [first, second] as Set
-    }
-
-    private void tasksAreExecutedInParallel(Task first, Task second) {
-        addToGraphAndPopulate(first, second)
-
-        def tasks = [selectNextTask(), selectNextTask()]
-
-        assert tasks as Set == [first, second] as Set
     }
 
     private void addToGraphAndPopulate(Task... tasks) {
