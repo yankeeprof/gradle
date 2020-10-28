@@ -152,7 +152,6 @@ abstract class AbstractUserTypeCodecTest {
     fun codecs() = Codecs(
         directoryFileTreeFactory = mock(),
         fileCollectionFactory = mock(),
-        artifactSetConverter = mock(),
         fileLookup = mock(),
         propertyFactory = mock(),
         filePropertyFactory = mock(),

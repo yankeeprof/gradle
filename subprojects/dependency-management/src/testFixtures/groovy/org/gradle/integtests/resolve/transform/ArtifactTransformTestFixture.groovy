@@ -16,7 +16,6 @@
 
 package org.gradle.integtests.resolve.transform
 
-import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.TasksWithInputsAndOutputs
 import org.gradle.integtests.fixtures.executer.ExecutionResult
 import org.gradle.test.fixtures.file.TestFile
@@ -76,11 +75,14 @@ allprojects {
     artifacts {
         implementation producer.output
     }
-    task resolve (type: ShowFileCollection) {
+    task resolve {
         def view = configurations.implementation.incoming.artifactView {
             attributes.attribute(color, 'green')
         }.files
-        files.from(view)
+        inputs.files view
+        doLast {
+            println "result = \${view.files.name}"
+        }
     }
     task resolveArtifacts(type: ShowArtifactCollection) {
         collection = configurations.implementation.incoming.artifactView {
@@ -91,16 +93,6 @@ allprojects {
 
 import ${JarOutputStream.name}
 import ${ZipEntry.name}
-
-class ShowFileCollection extends DefaultTask {
-    @InputFiles
-    final ConfigurableFileCollection files = project.objects.fileCollection()
-
-    @TaskAction
-    def go() {
-        println "result = \${files.files.name}"
-    }
-}
 
 class JarProducer extends DefaultTask {
     @OutputFile

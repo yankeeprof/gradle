@@ -68,7 +68,6 @@ class LocalFileDependencyBackedArtifactSetTest extends Specification {
 
         then:
         1 * listener.prepareForVisit(_) >> FileCollectionStructureVisitor.VisitType.NoContents
-        1 * visitor.endVisitCollection(_)
         0 * _
     }
 
