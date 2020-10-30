@@ -245,6 +245,9 @@ public class WatchingVirtualFileSystem extends AbstractVirtualFileSystem impleme
                     try {
                         String absolutePath = path.toString();
                         if (!locationsWrittenByCurrentBuild.wasLocationWritten(absolutePath)) {
+                            if (type == FileWatcherRegistry.Type.INVALIDATED) {
+                                LOGGER.warn("Received invalidated event for {}", absolutePath);
+                            }
                             rootReference.update(root -> updateNotifyingListeners(
                                 diffListener -> root.invalidate(absolutePath, new VfsChangeLoggingNodeDiffListener(type, path, diffListener))
                             ));
