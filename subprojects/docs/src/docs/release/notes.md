@@ -10,6 +10,7 @@ We would like to thank the following community contributors to this release of G
 [Stefan Oehme](https://github.com/oehme),
 [Thad House](https://github.com/ThadHouse),
 [knittl](https://github.com/knittl),
+[Fedyanin Timofey](https://github.com/tfedyanin),
 [Gregorios Leach](https://github.com/simtel12).
 
 <!--
