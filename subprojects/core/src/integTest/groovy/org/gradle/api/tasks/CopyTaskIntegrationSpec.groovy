@@ -1955,7 +1955,7 @@ class CopyTaskIntegrationSpec extends AbstractIntegrationSpec {
            task copyWithExpandImmutableMapArgument(type: Copy) {
                from("sourceDir") {
                    filesMatching("fileToExpand.txt") {
-                       expand Collections.singletonMap("foo", "fromSingletonMap");
+                       expand Collections.singletonMap("foo", "fromSingletonMap")
                    }
                }
                into "targetDir"

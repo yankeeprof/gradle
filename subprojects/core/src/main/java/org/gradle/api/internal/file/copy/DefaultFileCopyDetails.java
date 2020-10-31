@@ -32,7 +32,6 @@ import java.io.FilterReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class DefaultFileCopyDetails extends AbstractFileTreeElement implements FileVisitDetails, FileCopyDetailsInternal {
@@ -216,14 +215,9 @@ public class DefaultFileCopyDetails extends AbstractFileTreeElement implements F
 
     @Override
     public ContentFilterable expand(Map<String, ?> properties) {
-        filterChain.expand(mutablePropertiesCopy(properties));
+        filterChain.expand(properties);
         return this;
     }
-
-    private Map<String, ?> mutablePropertiesCopy(final Map<String, ?> properties) {
-        return new LinkedHashMap<>(properties);
-    }
-
 
     @Override
     public void setDuplicatesStrategy(DuplicatesStrategy strategy) {
