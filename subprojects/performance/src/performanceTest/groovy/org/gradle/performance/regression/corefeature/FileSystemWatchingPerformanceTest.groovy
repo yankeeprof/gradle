@@ -55,6 +55,7 @@ class FileSystemWatchingPerformanceTest extends AbstractCrossVersionPerformanceT
             runner.warmUpRuns = 10
             runner.runs = 40
         }
+        temporaryFolder.suppressCleanup()
     }
 
     def "assemble for non-abi change with file system watching#configurationCaching"() {
