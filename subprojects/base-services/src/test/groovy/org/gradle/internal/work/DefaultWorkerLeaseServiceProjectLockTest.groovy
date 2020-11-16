@@ -337,6 +337,17 @@ class DefaultWorkerLeaseServiceProjectLockTest extends ConcurrentSpec {
         then:
         def e = thrown(IllegalStateException)
         e.message == "This thread may not acquire more locks."
+
+        when:
+        workerLeaseService.whileDisallowingProjectLockChanges {
+            workerLeaseService.whileDisallowingProjectLockChanges {}
+            workerLeaseService.withLocks([projectLock]) {
+            }
+        }
+
+        then:
+        def e2 = thrown(IllegalStateException)
+        e2.message == "This thread may not acquire more locks."
     }
 
     def "fails when attempting to release a project lock and changes are disallowed"() {
@@ -352,6 +363,18 @@ class DefaultWorkerLeaseServiceProjectLockTest extends ConcurrentSpec {
         then:
         def e = thrown(IllegalStateException)
         e.message == "This thread may not release any locks."
+
+        when:
+        workerLeaseService.withLocks([projectLock]) {
+            workerLeaseService.whileDisallowingProjectLockChanges {
+                workerLeaseService.whileDisallowingProjectLockChanges {}
+                workerLeaseService.withoutProjectLock {}
+            }
+        }
+
+        then:
+        def e2 = thrown(IllegalStateException)
+        e2.message == "This thread may not release any locks."
     }
 
     def "does not release project locks in blocking action when changes to locks are disallowed"() {

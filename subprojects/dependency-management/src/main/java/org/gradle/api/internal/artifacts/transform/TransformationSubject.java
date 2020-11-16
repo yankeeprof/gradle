@@ -40,6 +40,13 @@ public abstract class TransformationSubject implements Describable {
     public abstract ImmutableList<File> getFiles();
 
     /**
+     * The artifacts which should be transformed.
+     */
+    public abstract ImmutableList<ResolvableArtifact> getArtifacts();
+
+    abstract ResolvableArtifact getSourceArtifact();
+
+    /**
      * Component producing this subject.
      *
      * {@link Optional#empty()} if the subject is not produced by a project.
@@ -53,28 +60,6 @@ public abstract class TransformationSubject implements Describable {
         return new SubsequentTransformationSubject(this, result);
     }
 
-    private static abstract class AbstractInitialTransformationSubject extends TransformationSubject {
-        private final File file;
-
-        public AbstractInitialTransformationSubject(File file) {
-            this.file = file;
-        }
-
-        @Override
-        public ImmutableList<File> getFiles() {
-            return ImmutableList.of(file);
-        }
-
-        public File getFile() {
-            return file;
-        }
-
-        @Override
-        public String toString() {
-            return getDisplayName();
-        }
-    }
-
     private static class InitialArtifactTransformationSubject extends TransformationSubject {
         private final ResolvableArtifact artifact;
 
@@ -85,6 +70,16 @@ public abstract class TransformationSubject implements Describable {
         @Override
         public ImmutableList<File> getFiles() {
             return ImmutableList.of(artifact.getFile());
+        }
+
+        @Override
+        public ImmutableList<ResolvableArtifact> getArtifacts() {
+            return ImmutableList.of(artifact);
+        }
+
+        @Override
+        ResolvableArtifact getSourceArtifact() {
+            return artifact;
         }
 
         @Override
@@ -114,6 +109,21 @@ public abstract class TransformationSubject implements Describable {
         @Override
         public ImmutableList<File> getFiles() {
             return files;
+        }
+
+        @Override
+        public ImmutableList<ResolvableArtifact> getArtifacts() {
+            ResolvableArtifact sourceArtifact = previous.getSourceArtifact();
+            ImmutableList.Builder<ResolvableArtifact> builder = ImmutableList.builderWithExpectedSize(files.size());
+            for (File file : files) {
+                builder.add(sourceArtifact.transformedTo(file));
+            }
+            return builder.build();
+        }
+
+        @Override
+        ResolvableArtifact getSourceArtifact() {
+            return previous.getSourceArtifact();
         }
 
         @Override

@@ -32,7 +32,6 @@ import org.gradle.internal.Try;
 import org.gradle.internal.operations.BuildOperationQueue;
 import org.gradle.internal.operations.RunnableBuildOperation;
 
-import java.io.File;
 import java.util.Collection;
 
 /**
@@ -101,8 +100,8 @@ public class TransformedProjectArtifactSet implements ResolvedArtifactSet, FileC
             node.executeIfNotAlready();
             Try<TransformationSubject> transformedSubject = node.getTransformedSubject();
             if (transformedSubject.isSuccessful()) {
-                for (File file : transformedSubject.get().getFiles()) {
-                    visitor.visitArtifact(displayName, targetAttributes, node.getInputArtifact().transformedTo(file));
+                for (ResolvableArtifact artifact : transformedSubject.get().getArtifacts()) {
+                    visitor.visitArtifact(displayName, targetAttributes, artifact);
                 }
             } else {
                 Throwable failure = transformedSubject.getFailure().get();

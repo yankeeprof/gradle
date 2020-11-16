@@ -36,7 +36,7 @@ import java.io.File;
 /**
  * A single transformation step.
  *
- * Transforms a subject by invoking a transformer on each of the subjects files.
+ * Transforms a subject by invoking a transformer on each of the subject's files.
  */
 public class TransformationStep implements Transformation, TaskDependencyContainer {
     private static final Logger LOGGER = LoggerFactory.getLogger(TransformationStep.class);

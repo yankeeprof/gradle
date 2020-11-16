@@ -64,11 +64,12 @@ public abstract class AbstractResourceLockRegistry<K, T extends ResourceLock> im
 
     public <S> S whileDisallowingLockChanges(Factory<S> action) {
         ThreadLockDetails lockDetails = detailsForCurrentThread();
+        boolean oldValue = lockDetails.mayChange;
         lockDetails.mayChange = false;
         try {
             return action.create();
         } finally {
-            lockDetails.mayChange = true;
+            lockDetails.mayChange = oldValue;
         }
     }
 

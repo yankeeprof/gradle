@@ -38,7 +38,7 @@ class InitialTransformationNodeCodec(
 
     override suspend fun ReadContext.doDecode(): TransformationNode.InitialTransformationNode {
         val transformationStep = readNonNull<TransformStepSpec>()
-        val artifacts = readNonNull<ResolvableArtifact>()
-        return TransformationNode.initial(transformationStep.transformation, artifacts, transformationStep.recreate(), buildOperationExecutor, calculatedValueContainerFactory)
+        val artifact = readNonNull<ResolvableArtifact>()
+        return TransformationNode.initial(transformationStep.transformation, artifact, transformationStep.recreate(), buildOperationExecutor, calculatedValueContainerFactory)
     }
 }
