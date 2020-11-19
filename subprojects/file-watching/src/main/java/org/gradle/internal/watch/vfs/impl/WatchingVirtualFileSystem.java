@@ -296,7 +296,7 @@ public class WatchingVirtualFileSystem extends AbstractVirtualFileSystem impleme
         private void maybeLogVfsChangeMessage() {
             if (!alreadyLogged) {
                 alreadyLogged = true;
-                LOGGER.debug("Handling VFS change {} {}", type, path);
+                LOGGER.warn("Handling VFS change {} {}", type, path);
             }
         }
     }

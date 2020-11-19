@@ -82,7 +82,7 @@ class FileSystemWatchingSoakTest extends DaemonIntegrationSpec implements FileSy
             println("Running iteration ${iteration + 1}")
             changeSourceFiles(iteration, numberOfChangesBetweenBuilds)
             waitForChangesToBePickedUp()
-            succeeds("assemble", "--debug")
+            succeeds("assemble")
 
             // then:
             assert daemons.daemon.logFile == daemon.logFile
