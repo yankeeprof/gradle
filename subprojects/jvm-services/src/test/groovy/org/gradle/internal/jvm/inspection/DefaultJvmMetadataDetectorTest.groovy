@@ -17,6 +17,7 @@
 package org.gradle.internal.jvm.inspection
 
 import org.gradle.api.JavaVersion
+import org.gradle.api.internal.file.TestFiles
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.process.ExecResult
 import org.gradle.process.internal.ExecHandle
@@ -33,13 +34,21 @@ class DefaultJvmMetadataDetectorTest extends Specification {
     @Rule
     TemporaryFolder temporaryFolder
 
+    private DefaultJvmMetadataDetector createDefaultJvmMetadataDetector(ExecHandleFactory execHandleFactory) {
+        def factory = new DefaultJvmMetadataDetector.Factory(
+            execHandleFactory,
+            TestFiles.tmpDirTemporaryFileProvider(temporaryFolder.root)
+        )
+        return factory.create()
+    }
+
     @Unroll
     def "can detect metadata of #displayName"() {
         given:
         def execHandleFactory = createExecHandleFactory(systemProperties)
 
         when:
-        def detector = new DefaultJvmMetadataDetector(execHandleFactory)
+        def detector = createDefaultJvmMetadataDetector(execHandleFactory)
         File javaHome = new File(jdk)
         if (exists) {
             javaHome = temporaryFolder.newFolder(jdk)
@@ -106,7 +115,7 @@ class DefaultJvmMetadataDetectorTest extends Specification {
         def execHandleFactory = createExecHandleFactory(systemProperties)
 
         when:
-        def detector = new DefaultJvmMetadataDetector(execHandleFactory)
+        def detector = createDefaultJvmMetadataDetector(execHandleFactory)
         def javaHome = temporaryFolder.newFolder(jdk)
         def metadata = detector.getMetadata(javaHome)
 
@@ -134,7 +143,7 @@ class DefaultJvmMetadataDetectorTest extends Specification {
         def execHandleFactory = createExecHandleFactory(systemProperties)
 
         when:
-        def detector = new DefaultJvmMetadataDetector(execHandleFactory)
+        def detector = createDefaultJvmMetadataDetector(execHandleFactory)
         File javaHome = new File(jdk)
         if (exists) {
             javaHome = temporaryFolder.newFolder(jdk)

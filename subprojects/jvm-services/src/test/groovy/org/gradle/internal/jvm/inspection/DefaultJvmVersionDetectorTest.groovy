@@ -19,10 +19,19 @@ package org.gradle.internal.jvm.inspection
 import org.gradle.api.JavaVersion
 import org.gradle.api.internal.file.TestFiles
 import org.gradle.internal.jvm.Jvm
+import org.gradle.process.internal.ExecHandleFactory
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
 class DefaultJvmVersionDetectorTest extends Specification {
-    def detector = new DefaultJvmVersionDetector(new DefaultJvmMetadataDetector(TestFiles.execHandleFactory()))
+    @Rule
+    TemporaryFolder temporaryFolder
+    def factory = new DefaultJvmMetadataDetector.Factory(
+        TestFiles.execActionFactory() as ExecHandleFactory,
+        TestFiles.tmpDirTemporaryFileProvider(temporaryFolder.root)
+    )
+    def detector = new DefaultJvmVersionDetector(factory.create())
 
     def "can determine version of current jvm"() {
         expect:

@@ -21,7 +21,7 @@ import org.gradle.api.UncheckedIOException;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.FileSystemOperations;
 import org.gradle.api.file.FileTree;
-import org.gradle.api.internal.ClassPathRegistry;
+import org.gradle.api.internal.file.TmpDirTemporaryFileProvider;
 import org.gradle.api.internal.project.IsolatedAntBuilder;
 import org.gradle.api.internal.tasks.AntGroovydoc;
 import org.gradle.api.logging.LogLevel;
@@ -117,7 +117,7 @@ public class Groovydoc extends SourceTask {
     @Nullable
     private String getPathToOverview() {
         TextResource overview = getOverviewText();
-        if (overview!=null) {
+        if (overview != null) {
             return overview.asFile().getAbsolutePath();
         }
         return null;
@@ -192,9 +192,9 @@ public class Groovydoc extends SourceTask {
     @Internal
     public AntGroovydoc getAntGroovydoc() {
         if (antGroovydoc == null) {
-            IsolatedAntBuilder antBuilder = getServices().get(IsolatedAntBuilder.class);
-            ClassPathRegistry classPathRegistry = getServices().get(ClassPathRegistry.class);
-            antGroovydoc = new AntGroovydoc(antBuilder, classPathRegistry);
+            final IsolatedAntBuilder antBuilder = getServices().get(IsolatedAntBuilder.class);
+            final TmpDirTemporaryFileProvider temporaryFileProvider = getServices().get(TmpDirTemporaryFileProvider.class);
+            antGroovydoc = new AntGroovydoc(antBuilder, temporaryFileProvider);
         }
         return antGroovydoc;
     }

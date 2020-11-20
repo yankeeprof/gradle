@@ -16,8 +16,10 @@
 
 package org.gradle.internal.jvm.inspection;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.io.Files;
 import org.gradle.api.JavaVersion;
+import org.gradle.api.internal.file.TemporaryFileProvider;
 import org.gradle.internal.jvm.Jvm;
 import org.gradle.internal.os.OperatingSystem;
 import org.gradle.process.ExecResult;
@@ -25,18 +27,26 @@ import org.gradle.process.internal.ExecException;
 import org.gradle.process.internal.ExecHandleBuilder;
 import org.gradle.process.internal.ExecHandleFactory;
 
+import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.EnumMap;
 
 
-
 public class DefaultJvmMetadataDetector implements JvmMetadataDetector {
 
     private final ExecHandleFactory execHandleFactory;
+    private final TemporaryFileProvider temporaryFileProvider;
 
-    public DefaultJvmMetadataDetector(ExecHandleFactory execHandleFactory) {
+    /**
+     * Use {@link DefaultJvmMetadataDetector.Factory} to instantiate.
+     */
+    private DefaultJvmMetadataDetector(
+        final ExecHandleFactory execHandleFactory,
+        final TemporaryFileProvider temporaryFileProvider
+    ) {
         this.execHandleFactory = execHandleFactory;
+        this.temporaryFileProvider = temporaryFileProvider;
     }
 
     @Override
@@ -70,7 +80,7 @@ public class DefaultJvmMetadataDetector implements JvmMetadataDetector {
         }
         try {
             JavaVersion.toVersion(implementationVersion);
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return JvmInstallationMetadata.failure(javaHome, "Cannot parse version number: " + implementationVersion);
         }
         String vendor = metadata.get(ProbedSystemProperty.VENDOR);
@@ -128,9 +138,25 @@ public class DefaultJvmMetadataDetector implements JvmMetadataDetector {
     }
 
     private File writeProbeClass() {
-        File probe = new MetadataProbe().writeClass(Files.createTempDir());
+        File probe = new MetadataProbe().writeClass(temporaryFileProvider.createTemporaryDirectory("meta-data", null));
         probe.deleteOnExit();
         return probe;
+    }
+
+    public static class Factory {
+        private final ExecHandleFactory execHandleFactory;
+        private final TemporaryFileProvider temporaryFileProvider;
+
+        @Inject
+        @VisibleForTesting
+        public Factory(ExecHandleFactory execHandleFactory, TemporaryFileProvider temporaryFileProvider) {
+            this.execHandleFactory = execHandleFactory;
+            this.temporaryFileProvider = temporaryFileProvider;
+        }
+
+        public DefaultJvmMetadataDetector create() {
+            return new DefaultJvmMetadataDetector(execHandleFactory, temporaryFileProvider);
+        }
     }
 
 }

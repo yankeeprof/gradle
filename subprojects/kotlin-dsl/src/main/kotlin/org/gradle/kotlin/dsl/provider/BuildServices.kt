@@ -24,6 +24,7 @@ import org.gradle.api.internal.classpath.ModuleRegistry
 import org.gradle.api.internal.file.FileCollectionFactory
 import org.gradle.api.internal.initialization.loadercache.CompileClasspathHasher
 import org.gradle.api.internal.initialization.loadercache.DefaultClasspathHasher
+import org.gradle.api.internal.file.TmpDirTemporaryFileProvider
 import org.gradle.cache.internal.GeneratedGradleJarCache
 import org.gradle.groovy.scripts.internal.ScriptSourceHasher
 import org.gradle.initialization.ClassLoaderScopeRegistry
@@ -57,6 +58,7 @@ object BuildServices {
         classLoaderScopeRegistry: ClassLoaderScopeRegistry,
         dependencyFactory: DependencyFactory,
         jarCache: GeneratedGradleJarCache,
+        tmpDirTemporaryFileProvider: TmpDirTemporaryFileProvider,
         progressLoggerFactory: ProgressLoggerFactory
     ) =
 
@@ -66,6 +68,7 @@ object BuildServices {
             classLoaderScopeRegistry.coreAndPluginsScope,
             gradleApiJarsProviderFor(dependencyFactory),
             versionedJarCacheFor(jarCache),
+            tmpDirTemporaryFileProvider,
             StandardJarGenerationProgressMonitorProvider(progressLoggerFactory)
         )
 
