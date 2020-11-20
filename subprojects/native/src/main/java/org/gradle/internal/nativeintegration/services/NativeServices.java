@@ -160,13 +160,13 @@ public class NativeServices extends DefaultServiceRegistry implements ServiceReg
     }
 
     private NativeServices() {
-        addProvider(new FileSystemServices());
         register(new Action<ServiceRegistration>() {
             @Override
             public void execute(ServiceRegistration registration) {
                 registration.add(TmpDirTemporaryFileProvider.class);
             }
         });
+        addProvider(new FileSystemServices());
     }
 
     @Override
