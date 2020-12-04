@@ -21,6 +21,12 @@ import org.gradle.test.fixtures.dsl.GradleDsl
 
 
 class VersionNumberIntegrationTest extends AbstractIntegrationSpec {
+    def setup() {
+        executer.beforeExecute {
+            executer.withRepositoryMirrors()
+            executer.withPluginRepositoryMirror()
+        }
+    }
 
     def "nullability with Kotlin jsr-305 strict"() {
 

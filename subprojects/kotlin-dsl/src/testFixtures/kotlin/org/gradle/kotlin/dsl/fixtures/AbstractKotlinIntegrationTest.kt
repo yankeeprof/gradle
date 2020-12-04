@@ -34,6 +34,7 @@ abstract class AbstractKotlinIntegrationTest : AbstractIntegrationTest() {
     @Before
     fun useRepositoryMirrors() {
         executer.withRepositoryMirrors()
+        executer.withPluginRepositoryMirror()
     }
 
     protected

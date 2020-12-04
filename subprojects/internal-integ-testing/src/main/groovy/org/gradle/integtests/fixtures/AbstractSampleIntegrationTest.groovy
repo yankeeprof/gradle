@@ -21,6 +21,7 @@ import org.junit.Assume
 abstract class AbstractSampleIntegrationTest extends AbstractIntegrationSpec {
     def setup() {
         executer.withRepositoryMirrors()
+        executer.withPluginRepositoryMirror()
     }
 
     def configureExecuterForToolchains(String... versions) {
