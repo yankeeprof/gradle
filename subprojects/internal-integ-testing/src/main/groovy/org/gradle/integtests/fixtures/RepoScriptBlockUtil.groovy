@@ -51,6 +51,7 @@ class RepoScriptBlockUtil {
         JCENTER(BINTRAY_JCENTER_URL, System.getProperty('org.gradle.integtest.mirrors.jcenter'), "maven"),
         MAVEN_CENTRAL(MAVEN_CENTRAL_URL, System.getProperty('org.gradle.integtest.mirrors.mavencentral'), "maven"),
         GOOGLE(GOOGLE_URL, System.getProperty('org.gradle.integtest.mirrors.google'), "maven"),
+        GOOGLE_APIS("https://ajax.googleapis.com/ajax/libs", System.getProperty('org.gradle.integtest.mirrors.googleapis'), "maven"),
         LIGHTBEND_MAVEN("https://repo.lightbend.com/lightbend/maven-releases", System.getProperty('org.gradle.integtest.mirrors.lightbendmaven'), "maven"),
         LIGHTBEND_IVY("https://repo.lightbend.com/lightbend/ivy-releases", System.getProperty('org.gradle.integtest.mirrors.lightbendivy'), "ivy"),
         SPRING_RELEASES('https://maven.springframework.org/release', System.getProperty('org.gradle.integtest.mirrors.springreleases'), 'maven'),
@@ -129,6 +130,14 @@ class RepoScriptBlockUtil {
         } else {
             url + '/'
         }
+    }
+
+    static String googleApisRepositoryMirrorUrl() {
+        return MirroredRepository.GOOGLE_APIS.mirrorUrl
+    }
+
+    static String gradleJavascriptRepositoryMirrorUrl() {
+        return MirroredRepository.GRADLE_JAVASCRIPT.mirrorUrl
     }
 
     static String kotlinxRepositoryDefinition(GradleDsl dsl = GROOVY) {

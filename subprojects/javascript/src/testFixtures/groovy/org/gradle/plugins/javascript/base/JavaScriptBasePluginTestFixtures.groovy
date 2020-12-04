@@ -15,13 +15,16 @@
  */
 
 package org.gradle.plugins.javascript.base
+import org.gradle.integtests.fixtures.RepoScriptBlockUtil
 
 class JavaScriptBasePluginTestFixtures {
 
     static String getGradlePublicJSRepoScript() {
         """
         repositories {
-            javaScript.gradle()
+            javaScript.gradle {
+                url = '${RepoScriptBlockUtil.gradleJavascriptRepositoryMirrorUrl()}'
+            }
         }
         """
     }
@@ -29,7 +32,9 @@ class JavaScriptBasePluginTestFixtures {
     static String getGoogleRepoScript() {
         """
         repositories {
-            javaScript.googleApis()
+            javaScript.googleApis {
+                url = '${RepoScriptBlockUtil.googleApisRepositoryMirrorUrl()}'
+            }
         }
         """
     }

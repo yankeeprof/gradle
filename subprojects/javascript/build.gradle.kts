@@ -44,6 +44,7 @@ dependencies {
         because("ProjectBuilder tests load services from a Gradle distribution.")
     }
     integTestDistributionRuntimeOnly(project(":distributions-full"))
+    testFixturesImplementation(project(":internal-integ-testing"))
 }
 
 classycle {
