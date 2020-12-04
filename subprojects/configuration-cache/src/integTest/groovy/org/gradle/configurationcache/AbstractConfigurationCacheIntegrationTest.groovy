@@ -48,6 +48,10 @@ class AbstractConfigurationCacheIntegrationTest extends AbstractIntegrationSpec 
         // Verify that the previous test cleaned up state correctly
         assert System.getProperty(ConfigurationCacheOption.PROPERTY_NAME) == null
         problems = new ConfigurationCacheProblemsFixture(executer, testDirectory)
+        executer.beforeExecute {
+            executer.withRepositoryMirrors()
+            executer.withPluginRepositoryMirror()
+        }
     }
 
     @Override
