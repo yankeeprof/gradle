@@ -49,7 +49,6 @@ class AbstractConfigurationCacheIntegrationTest extends AbstractIntegrationSpec 
         assert System.getProperty(ConfigurationCacheOption.PROPERTY_NAME) == null
         problems = new ConfigurationCacheProblemsFixture(executer, testDirectory)
         executer.beforeExecute {
-            executer.withRepositoryMirrors()
             executer.withPluginRepositoryMirror()
         }
     }
