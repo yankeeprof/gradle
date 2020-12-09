@@ -48,6 +48,10 @@ import java.util.function.Function;
 
 public class TaskDiagnostics {
 
+    public static boolean isEnabled() {
+        return "true".equals(System.getenv("GRADLE_TASK_DIAGNOSTICS"));
+    }
+
     private final File logFile;
 
     private final PropertyWalker propertyWalker;

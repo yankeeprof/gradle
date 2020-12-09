@@ -129,10 +129,13 @@ public class DefaultTaskExecutionGraph implements TaskExecutionGraphInternal {
         this.globalServices = globalServices;
         this.executionPlan = new DefaultExecutionPlan(gradleInternal, taskNodeFactory, dependencyResolver);
         this.taskSelector = taskSelector;
-        this.taskDiagnostics = new TaskDiagnostics(gradleInternal);
-        whenReady(taskExecutionGraph -> dumpTaskGraph());
-        beforeTask(task -> dumpTaskBeforeExecution(task));
-
+        if (TaskDiagnostics.isEnabled()) {
+            this.taskDiagnostics = new TaskDiagnostics(gradleInternal);
+            whenReady(taskExecutionGraph -> dumpTaskGraph());
+            beforeTask(task -> dumpTaskBeforeExecution(task));
+        } else {
+            this.taskDiagnostics = null;
+        }
     }
 
     @Override
