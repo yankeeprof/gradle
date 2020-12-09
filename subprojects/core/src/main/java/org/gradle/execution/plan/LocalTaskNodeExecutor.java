@@ -109,11 +109,6 @@ public class LocalTaskNodeExecutor implements NodeExecutor {
         if (consumer.getDependencySuccessors().contains(producer)) {
             return false;
         }
-        for (Node dependency : consumer.getAllSuccessors()) {
-            if (dependency == producer || dependency.getDependencySuccessors().contains(producer)) {
-                return false;
-            }
-        }
         // Do a deep search
         ArrayDeque<Node> queue = new ArrayDeque<>();
         consumer.getAllSuccessors().forEach(queue::add);
