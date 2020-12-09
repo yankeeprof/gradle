@@ -17,6 +17,8 @@
 import gradlebuild.basics.accessors.groovy
 import gradlebuild.basics.BuildEnvironment
 import gradlebuild.basics.testDistributionEnabled
+import gradlebuild.basics.maxLocalExecutors
+import gradlebuild.basics.maxRemoteExecutors
 import gradlebuild.basics.tasks.ClasspathManifest
 import gradlebuild.basics.extension.vendorAndMajorVersion
 import gradlebuild.jvm.argumentproviders.CiEnvironmentProvider
@@ -221,6 +223,8 @@ fun configureTests() {
             useJUnitPlatform()
             distribution {
                 enabled.set(true)
+                project.maxLocalExecutors()?.apply { maxLocalExecutors.set(this) }
+                project.maxRemoteExecutors()?.apply { maxRemoteExecutors.set(this) }
                 when {
                     OperatingSystem.current().isLinux -> requirements.set(listOf("os=linux", "gbt-dogfooding"))
                     OperatingSystem.current().isWindows -> requirements.set(listOf("os=windows", "gbt-dogfooding"))

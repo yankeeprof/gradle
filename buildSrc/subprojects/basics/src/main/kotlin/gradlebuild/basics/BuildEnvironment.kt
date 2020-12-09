@@ -24,6 +24,12 @@ import org.gradle.internal.os.OperatingSystem
 fun Project.testDistributionEnabled() = providers.systemProperty("enableTestDistribution").forUseAtConfigurationTime().orNull?.toBoolean() == true
 
 
+fun Project.maxLocalExecutors() = providers.systemProperty("maxLocalExecutors").forUseAtConfigurationTime().orNull?.toInt()
+
+
+fun Project.maxRemoteExecutors() = providers.systemProperty("maxRemoteExecutors").forUseAtConfigurationTime().orNull?.toInt()
+
+
 object BuildEnvironment {
 
     const val CI_ENVIRONMENT_VARIABLE = "CI"
