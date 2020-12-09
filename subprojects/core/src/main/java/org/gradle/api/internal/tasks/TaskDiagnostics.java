@@ -28,6 +28,8 @@ import org.gradle.api.internal.tasks.properties.PropertyValue;
 import org.gradle.api.internal.tasks.properties.PropertyVisitor;
 import org.gradle.api.internal.tasks.properties.PropertyWalker;
 import org.gradle.api.tasks.FileNormalizer;
+import org.gradle.internal.file.FileMetadata;
+import org.gradle.internal.file.Stat;
 import org.gradle.internal.fingerprint.DirectorySensitivity;
 import org.gradle.internal.logging.text.TreeFormatter;
 import org.gradle.internal.reflect.TypeValidationContext;
@@ -39,10 +41,12 @@ import java.util.Set;
 public class TaskDiagnostics {
     private final PropertyWalker propertyWalker;
     private final FileCollectionFactory fileCollectionFactory;
+    private final Stat stat;
 
     public TaskDiagnostics(GradleInternal gradleInternal) {
         propertyWalker = gradleInternal.getServices().get(PropertyWalker.class);
         fileCollectionFactory = gradleInternal.getServices().get(FileCollectionFactory.class);
+        stat = gradleInternal.getServices().get(Stat.class);
     }
 
     public void reportTaskPropertiesForTaskGraph(TaskInternal task, Set<Task> dependencies) {
@@ -80,9 +84,10 @@ public class TaskDiagnostics {
                 describeTo(value, formatter);
                 System.out.println(formatter.toString());
                 if (showFileCollectionContents && propertyValue.call() != null) {
-                    System.out.println("contents:");
+                    System.out.println("value:");
                     for (File file : fileCollectionFactory.resolving(propertyValue)) {
-                        System.out.println(file);
+                        FileMetadata metadata = TaskDiagnostics.this.stat.stat(file);
+                        System.out.println(metadata.getType() + " " + file);
                     }
                 }
             }
@@ -91,7 +96,9 @@ public class TaskDiagnostics {
 
     private void taskHeader(TaskInternal task) {
         System.out.println();
+        System.out.println("=======");
         System.out.println("Task " + task.getIdentityPath() + " with type " + GeneratedSubclasses.unpackType(task));
+        System.out.println("=======");
     }
 
     private static void describeTo(@Nullable Object value, TreeFormatter formatter) {

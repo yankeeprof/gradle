@@ -39,6 +39,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 
 public class UnpackingVisitor {
@@ -63,6 +64,8 @@ public class UnpackingVisitor {
             formatter.append("null");
         } else if (path instanceof FileCollectionInternal) {
             ((FileCollectionInternal) path).describeContents(formatter);
+        } else if (path instanceof Callable) {
+            formatter.node("Callable (class:" + path.getClass().getName() + ")");
         } else if (path instanceof ArrayList) {
             // A list type that we know is safe to iterate over
             for (Object child : (List) path) {
