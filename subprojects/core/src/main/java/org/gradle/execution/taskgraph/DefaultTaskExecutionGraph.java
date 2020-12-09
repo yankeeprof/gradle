@@ -29,8 +29,10 @@ import org.gradle.api.execution.TaskExecutionGraphListener;
 import org.gradle.api.execution.TaskExecutionListener;
 import org.gradle.api.internal.BuildScopeListenerRegistrationListener;
 import org.gradle.api.internal.GradleInternal;
+import org.gradle.api.internal.TaskInternal;
 import org.gradle.api.internal.project.ProjectStateRegistry;
 import org.gradle.api.internal.tasks.NodeExecutionContext;
+import org.gradle.api.internal.tasks.TaskDiagnostics;
 import org.gradle.api.specs.Spec;
 import org.gradle.api.specs.Specs;
 import org.gradle.api.tasks.TaskState;
@@ -125,6 +127,8 @@ public class DefaultTaskExecutionGraph implements TaskExecutionGraphInternal {
         this.globalServices = globalServices;
         this.executionPlan = new DefaultExecutionPlan(gradleInternal, taskNodeFactory, dependencyResolver);
         this.taskSelector = taskSelector;
+        whenReady(taskExecutionGraph -> dumpTaskGraph());
+        beforeTask(task -> dumpTaskBeforeExecution(task));
     }
 
     @Override
@@ -178,6 +182,21 @@ public class DefaultTaskExecutionGraph implements TaskExecutionGraphInternal {
         } else if (!graphListeners.isEmpty()) {
             LOGGER.info("Ignoring listeners of task graph ready event, as this build (" + gradleInternal.getIdentityPath() + ") has already executed work.");
         }
+    }
+
+    private void dumpTaskGraph() {
+        TaskDiagnostics diagnostics = new TaskDiagnostics(gradleInternal);
+
+        System.out.println("TASK GRAPH DETAILS");
+        for (Task task : getAllTasks()) {
+            TaskInternal taskInternal = (TaskInternal) task;
+            diagnostics.reportTaskProperties(taskInternal);
+        }
+    }
+
+    private void dumpTaskBeforeExecution(Task task) {
+        TaskDiagnostics diagnostics = new TaskDiagnostics(gradleInternal);
+        diagnostics.reportTaskProperties((TaskInternal) task);
     }
 
     @Override
