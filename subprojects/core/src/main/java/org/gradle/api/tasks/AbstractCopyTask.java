@@ -73,7 +73,7 @@ public abstract class AbstractCopyTask extends ConventionTask implements CopySpe
             CopySpecResolver resolver = spec.buildResolverRelativeToParent(parentResolver);
             String specPropertyName = specPropertyNameBuilder.toString();
 
-            getInputs().files((Callable<FileTree>) resolver::getSource)
+            getInputs().files((getProject().files((Callable<FileTree>) resolver::getSource)))
                 .withPropertyName(specPropertyName)
                 .withPathSensitivity(PathSensitivity.RELATIVE)
                 .skipWhenEmpty();
