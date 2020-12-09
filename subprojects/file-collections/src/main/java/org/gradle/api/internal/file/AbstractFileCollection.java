@@ -80,7 +80,7 @@ public abstract class AbstractFileCollection implements FileCollectionInternal {
      */
     @Override
     public final TreeFormatter describeContents(TreeFormatter formatter) {
-        formatter.node("collection type: ").appendType(getClass()).append(" (id: ").append(String.valueOf(System.identityHashCode(this))).append(")");
+        formatter.node("collection type: ").appendType(getClass());
         formatter.startChildren();
         appendContents(formatter);
         formatter.endChildren();

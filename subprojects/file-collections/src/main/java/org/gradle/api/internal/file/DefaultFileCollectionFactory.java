@@ -316,20 +316,8 @@ public class DefaultFileCollectionFactory implements FileCollectionFactory {
         protected void appendContents(TreeFormatter formatter) {
             formatter.node("source");
             formatter.startChildren();
-            appendItem(formatter, source);
+            UnpackingVisitor.describeElementTo(source, formatter);
             formatter.endChildren();
-        }
-
-        private void appendItem(TreeFormatter formatter, Object item) {
-            if (item instanceof FileCollectionInternal) {
-                ((FileCollectionInternal) item).describeContents(formatter);
-            } else if (item instanceof ArrayList) {
-                for (Object child : (List) item) {
-                    appendItem(formatter, child);
-                }
-            } else {
-                formatter.node(item + " (class: " + item.getClass().getName() + ")");
-            }
         }
     }
 }

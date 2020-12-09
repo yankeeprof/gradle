@@ -19,6 +19,7 @@ package org.gradle.api.internal.file;
 import com.google.common.collect.Iterators;
 import org.gradle.api.internal.tasks.TaskDependencyResolveContext;
 import org.gradle.api.specs.Spec;
+import org.gradle.internal.logging.text.TreeFormatter;
 import org.gradle.util.CollectionUtils;
 
 import java.io.File;
@@ -35,6 +36,14 @@ public class FilteredFileCollection extends AbstractFileCollection {
         super(collection.patternSetFactory);
         this.collection = collection;
         this.filterSpec = filterSpec;
+    }
+
+    @Override
+    protected void appendContents(TreeFormatter formatter) {
+        formatter.node("backing collection");
+        formatter.startChildren();
+        collection.describeContents(formatter);
+        formatter.endChildren();
     }
 
     @Override

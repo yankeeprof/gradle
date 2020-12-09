@@ -30,11 +30,14 @@ import org.gradle.api.tasks.TaskOutputs;
 import org.gradle.api.tasks.util.PatternSet;
 import org.gradle.internal.Factory;
 import org.gradle.internal.file.PathToFileResolver;
+import org.gradle.internal.logging.text.TreeFormatter;
 import org.gradle.util.DeferredUtil;
 
 import javax.annotation.Nullable;
 import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -53,6 +56,25 @@ public class UnpackingVisitor {
         this.resolver = resolver;
         this.patternSetFactory = patternSetFactory;
         this.includeBuildable = includeBuildable;
+    }
+
+    public static void describeElementTo(@Nullable Object path, TreeFormatter formatter) {
+        if (path == null) {
+            formatter.append("null");
+        } else if (path instanceof FileCollectionInternal) {
+            ((FileCollectionInternal) path).describeContents(formatter);
+        } else if (path instanceof ArrayList) {
+            // A list type that we know is safe to iterate over
+            for (Object child : (List) path) {
+                describeElementTo(child, formatter);
+            }
+        } else if (path instanceof Object[]) {
+            for (Object child : (Object[]) path) {
+                describeElementTo(child, formatter);
+            }
+        } else {
+            formatter.node(path + " (class: " + path.getClass().getName() + ")");
+        }
     }
 
     public void add(@Nullable Object element) {

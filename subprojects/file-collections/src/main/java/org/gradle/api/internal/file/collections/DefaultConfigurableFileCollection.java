@@ -154,13 +154,11 @@ public class DefaultConfigurableFileCollection extends CompositeFileCollection i
             formatter.node("contents");
             formatter.startChildren();
             for (Object path : paths) {
-                if (path instanceof FileCollectionInternal) {
-                    ((FileCollectionInternal) path).describeContents(formatter);
-                } else {
-                    formatter.node(path.toString());
-                }
+                UnpackingVisitor.describeElementTo(path, formatter);
             }
             formatter.endChildren();
+        } else {
+            formatter.node("collection is empty");
         }
     }
 
