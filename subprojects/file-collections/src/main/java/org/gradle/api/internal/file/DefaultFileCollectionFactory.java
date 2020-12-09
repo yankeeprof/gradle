@@ -47,7 +47,6 @@ import org.gradle.internal.nativeintegration.filesystem.FileSystem;
 import java.io.File;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
