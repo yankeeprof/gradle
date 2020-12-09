@@ -82,7 +82,7 @@ fun BuildSteps.substDirOnWindows(os: Os, buildCache: BuildCache) {
         gradleWrapper {
             name = "CLEAN_BUILD_SRC_ON_SUBST_DRIVE"
             tasks = "clean"
-            workingDir = "P:/buildSrc"
+            workingDir = "P:/build-logic"
             executionMode = BuildStep.ExecutionMode.ALWAYS
             gradleWrapperPath = "../"
             gradleParams = (
@@ -104,7 +104,7 @@ fun BuildSteps.removeSubstDirOnWindows(os: Os, buildCache: BuildCache) {
         gradleWrapper {
             name = "CLEAN_BUILD_SRC_ON_CHECKOUT"
             tasks = "clean"
-            workingDir = "%teamcity.build.checkoutDir%/buildSrc"
+            workingDir = "%teamcity.build.checkoutDir%/build-logic"
             gradleWrapperPath = "../"
             executionMode = BuildStep.ExecutionMode.ALWAYS
             gradleParams = (
