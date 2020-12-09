@@ -98,6 +98,8 @@ public class DefaultTaskExecutionGraph implements TaskExecutionGraphInternal {
 
     private final Set<Task> requestedTasks = Sets.newTreeSet();
 
+    private final TaskDiagnostics taskDiagnostics;
+
     public DefaultTaskExecutionGraph(
         PlanExecutor planExecutor,
         List<NodeExecutor> nodeExecutors,
@@ -127,8 +129,10 @@ public class DefaultTaskExecutionGraph implements TaskExecutionGraphInternal {
         this.globalServices = globalServices;
         this.executionPlan = new DefaultExecutionPlan(gradleInternal, taskNodeFactory, dependencyResolver);
         this.taskSelector = taskSelector;
+        this.taskDiagnostics = new TaskDiagnostics(gradleInternal);
         whenReady(taskExecutionGraph -> dumpTaskGraph());
         beforeTask(task -> dumpTaskBeforeExecution(task));
+
     }
 
     @Override
@@ -185,18 +189,11 @@ public class DefaultTaskExecutionGraph implements TaskExecutionGraphInternal {
     }
 
     private void dumpTaskGraph() {
-        TaskDiagnostics diagnostics = new TaskDiagnostics(gradleInternal);
-
-        System.out.println("TASK GRAPH DETAILS");
-        for (Task task : getAllTasks()) {
-            TaskInternal taskInternal = (TaskInternal) task;
-            diagnostics.reportTaskPropertiesForTaskGraph(taskInternal, getDependencies(task));
-        }
+        taskDiagnostics.reportTaskGraph(getAllTasks(), this::getDependencies);
     }
 
     private void dumpTaskBeforeExecution(Task task) {
-        TaskDiagnostics diagnostics = new TaskDiagnostics(gradleInternal);
-        diagnostics.reportTaskPropertiesForExecution((TaskInternal) task);
+        taskDiagnostics.reportTaskPropertiesForExecution((TaskInternal) task);
     }
 
     @Override

@@ -16,7 +16,9 @@
 
 package org.gradle.api.internal.tasks;
 
+import org.gradle.api.Action;
 import org.gradle.api.Task;
+import org.gradle.api.UncheckedIOException;
 import org.gradle.api.internal.GeneratedSubclasses;
 import org.gradle.api.internal.GradleInternal;
 import org.gradle.api.internal.TaskInternal;
@@ -33,37 +35,73 @@ import org.gradle.internal.file.Stat;
 import org.gradle.internal.fingerprint.DirectorySensitivity;
 import org.gradle.internal.logging.text.TreeFormatter;
 import org.gradle.internal.reflect.TypeValidationContext;
+import org.gradle.internal.scopeids.id.BuildInvocationScopeId;
 
 import javax.annotation.Nullable;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 public class TaskDiagnostics {
+
+    private final File logFile;
+
     private final PropertyWalker propertyWalker;
     private final FileCollectionFactory fileCollectionFactory;
     private final Stat stat;
 
     public TaskDiagnostics(GradleInternal gradleInternal) {
+        logFile = resolveLogFile(gradleInternal);
         propertyWalker = gradleInternal.getServices().get(PropertyWalker.class);
         fileCollectionFactory = gradleInternal.getServices().get(FileCollectionFactory.class);
         stat = gradleInternal.getServices().get(Stat.class);
     }
 
-    public void reportTaskPropertiesForTaskGraph(TaskInternal task, Set<Task> dependencies) {
-        taskHeader(task);
-        System.out.println("dependencies:");
-        for (Task dependency : dependencies) {
-            System.out.println(((TaskInternal) dependency).getIdentityPath());
+    private File resolveLogFile(GradleInternal gradleInternal) {
+        String buildInvocationId = gradleInternal.getServices().get(BuildInvocationScopeId.class).getId().asString();
+        File rootDir = gradleInternal.getRoot().getRootProject().getProjectDir();
+        return new File(rootDir, "task-diagnostics-" + buildInvocationId + ".log");
+    }
+
+    private synchronized void writingLogs(Action<PrintWriter> action) {
+        try (FileOutputStream output = new FileOutputStream(logFile, true)) {
+            action.execute(new PrintWriter(output));
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
-        reportTaskProperties(task, false);
+    }
+
+    public void reportTaskGraph(List<Task> tasks, Function<Task, Set<Task>> taskDependenciesSupplier) {
+        writingLogs(writer -> {
+            writer.println("TASK GRAPH DETAILS");
+            for (Task task : tasks) {
+                TaskInternal taskInternal = (TaskInternal) task;
+                reportTaskPropertiesForTaskGraph(writer, taskInternal, taskDependenciesSupplier.apply(task));
+            }
+        });
+    }
+
+    private void reportTaskPropertiesForTaskGraph(PrintWriter writer, TaskInternal task, Set<Task> dependencies) {
+        taskHeader(writer, task);
+        writer.println("dependencies:");
+        for (Task dependency : dependencies) {
+            writer.println(((TaskInternal) dependency).getIdentityPath());
+        }
+        reportTaskProperties(writer, task, false);
     }
 
     public void reportTaskPropertiesForExecution(TaskInternal task) {
-        taskHeader(task);
-        reportTaskProperties(task, true);
+        writingLogs(writer -> {
+            taskHeader(writer, task);
+            reportTaskProperties(writer, task, true);
+        });
     }
 
-    private void reportTaskProperties(TaskInternal task, boolean showFileCollectionContents) {
+    private void reportTaskProperties(PrintWriter writer, TaskInternal task, boolean showFileCollectionContents) {
         propertyWalker.visitProperties(task, TypeValidationContext.NOOP, new PropertyVisitor.Adapter() {
             @Override
             public void visitInputFileProperty(String propertyName, boolean optional, boolean skipWhenEmpty, DirectorySensitivity directorySensitivity, boolean incremental, @Nullable Class<? extends FileNormalizer> fileNormalizer, PropertyValue value, InputFilePropertyType filePropertyType) {
@@ -76,29 +114,29 @@ public class TaskDiagnostics {
             }
 
             private void reportProperty(String type, String propertyName, PropertyValue propertyValue) {
-                System.out.println();
-                System.out.println(type + " property " + task.getIdentityPath() + ':' + propertyName);
-                System.out.println("spec:");
+                writer.println();
+                writer.println(type + " property " + task.getIdentityPath() + ':' + propertyName);
+                writer.println("spec:");
                 Object value = propertyValue.getUnprocessedValue();
                 TreeFormatter formatter = new TreeFormatter();
                 describeTo(value, formatter);
-                System.out.println(formatter.toString());
+                writer.println(formatter.toString());
                 if (showFileCollectionContents && propertyValue.call() != null) {
-                    System.out.println("value:");
+                    writer.println("value:");
                     for (File file : fileCollectionFactory.resolving(propertyValue)) {
                         FileMetadata metadata = TaskDiagnostics.this.stat.stat(file);
-                        System.out.println(metadata.getType() + " " + file);
+                        writer.println(metadata.getType() + " " + file);
                     }
                 }
             }
         });
     }
 
-    private void taskHeader(TaskInternal task) {
-        System.out.println();
-        System.out.println("=======");
-        System.out.println("Task " + task.getIdentityPath() + " with type " + GeneratedSubclasses.unpackType(task));
-        System.out.println("=======");
+    private void taskHeader(PrintWriter writer, TaskInternal task) {
+        writer.println();
+        writer.println("=======");
+        writer.println("Task " + task.getIdentityPath() + " with type " + GeneratedSubclasses.unpackType(task));
+        writer.println("=======");
     }
 
     private static void describeTo(@Nullable Object value, TreeFormatter formatter) {
