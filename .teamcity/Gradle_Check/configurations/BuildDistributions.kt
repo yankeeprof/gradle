@@ -11,7 +11,7 @@ class BuildDistributions(model: CIBuildModel, stage: Stage) : BaseGradleBuildTyp
     name = "Build Distributions"
     description = "Creation and verification of the distribution and documentation"
 
-    applyDefaults(model, this, "packageBuild", extraParameters = buildScanTag("BuildDistributions") + " -PtestJavaHome=${LINUX.buildJavaHome()}")
+    applyDefaults(model, this, ":packageBuild", extraParameters = buildScanTag("BuildDistributions") + " -PtestJavaHome=${LINUX.buildJavaHome()}")
 
     features {
         publishBuildStatusToGithub(model)

@@ -80,7 +80,7 @@ class PerformanceTest(
                     workingDir = os.perfTestWorkingDir
                     gradleParams = (
                         performanceTestCommandLine(
-                            "clean ${performanceTestTaskNames.joinToString(" ") { "$it --channel %performance.channel% ${type.extraParameters}" }}",
+                            ":clean ${performanceTestTaskNames.joinToString(" ") { "$it --channel %performance.channel% ${type.extraParameters}" }}",
                             "%performance.baselines%",
                             extraParameters,
                             os
@@ -101,6 +101,6 @@ class PerformanceTest(
 
 fun getPerformanceTestTaskNames(performanceSubProject: String, testProjects: List<String>, performanceTestTaskSuffix: String): List<String> {
     return testProjects.map {
-        ":$performanceSubProject:$it$performanceTestTaskSuffix"
+        ":subprojects:$performanceSubProject:$it$performanceTestTaskSuffix"
     }
 }

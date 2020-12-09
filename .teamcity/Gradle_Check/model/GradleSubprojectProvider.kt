@@ -22,12 +22,12 @@ import model.Stage
 import model.TestCoverage
 import java.io.File
 
-val slowSubprojects = listOf("platform-play")
+val slowSubprojects = listOf("subprojects:platform-play")
 
 val ignoredSubprojects = listOf(
-    "soak", // soak test
-    "distributions-integ-tests", // build distribution testing
-    "architecture-test" // sanity check
+    "subprojects:soak", // soak test
+    "subprojects:distributions-integ-tests", // build distribution testing
+    "subprojects:architecture-test" // sanity check
 )
 
 interface GradleSubprojectProvider {

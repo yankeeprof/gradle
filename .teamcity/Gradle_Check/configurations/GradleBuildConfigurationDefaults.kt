@@ -86,7 +86,7 @@ fun BaseGradleBuildType.gradleRunnerStep(model: CIBuildModel, gradleTasks: Strin
     steps {
         gradleWrapper {
             name = "GRADLE_RUNNER"
-            tasks = "clean $gradleTasks"
+            tasks = ":clean $gradleTasks"
             gradleParams = (
                 buildToolGradleParameters(daemon) +
                     this@gradleRunnerStep.buildCache.gradleParameters(os) +
@@ -139,7 +139,7 @@ fun BaseGradleBuildType.killProcessStep(stepName: String, daemon: Boolean, os: O
         gradleWrapper {
             name = stepName
             executionMode = BuildStep.ExecutionMode.ALWAYS
-            tasks = "killExistingProcessesStartedByGradle"
+            tasks = ":killExistingProcessesStartedByGradle"
             gradleParams = (
                 buildToolGradleParameters(daemon) +
                     this@killProcessStep.buildCache.gradleParameters(os) +

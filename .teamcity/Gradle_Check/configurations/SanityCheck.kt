@@ -23,7 +23,7 @@ class SanityCheck(model: CIBuildModel, stage: Stage) : BaseGradleBuildType(model
     applyDefaults(
             model,
             this,
-            "sanityCheck",
+            ":sanityCheck",
             extraParameters = "-DenableCodeQuality=true ${buildScanTag("SanityCheck")}"
     )
 }) {
