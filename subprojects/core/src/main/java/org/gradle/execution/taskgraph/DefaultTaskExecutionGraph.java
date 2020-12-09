@@ -190,13 +190,13 @@ public class DefaultTaskExecutionGraph implements TaskExecutionGraphInternal {
         System.out.println("TASK GRAPH DETAILS");
         for (Task task : getAllTasks()) {
             TaskInternal taskInternal = (TaskInternal) task;
-            diagnostics.reportTaskProperties(taskInternal);
+            diagnostics.reportTaskPropertiesForTaskGraph(taskInternal, getDependencies(task));
         }
     }
 
     private void dumpTaskBeforeExecution(Task task) {
         TaskDiagnostics diagnostics = new TaskDiagnostics(gradleInternal);
-        diagnostics.reportTaskProperties((TaskInternal) task);
+        diagnostics.reportTaskPropertiesForExecution((TaskInternal) task);
     }
 
     @Override

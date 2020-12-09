@@ -16,9 +16,11 @@
 
 package org.gradle.api.internal.tasks;
 
+import org.gradle.api.Task;
 import org.gradle.api.internal.GeneratedSubclasses;
 import org.gradle.api.internal.GradleInternal;
 import org.gradle.api.internal.TaskInternal;
+import org.gradle.api.internal.file.FileCollectionFactory;
 import org.gradle.api.internal.file.FileCollectionInternal;
 import org.gradle.api.internal.tasks.properties.InputFilePropertyType;
 import org.gradle.api.internal.tasks.properties.OutputFilePropertyType;
@@ -31,17 +33,33 @@ import org.gradle.internal.logging.text.TreeFormatter;
 import org.gradle.internal.reflect.TypeValidationContext;
 
 import javax.annotation.Nullable;
+import java.io.File;
+import java.util.Set;
 
 public class TaskDiagnostics {
     private final PropertyWalker propertyWalker;
+    private final FileCollectionFactory fileCollectionFactory;
 
     public TaskDiagnostics(GradleInternal gradleInternal) {
         propertyWalker = gradleInternal.getServices().get(PropertyWalker.class);
+        fileCollectionFactory = gradleInternal.getServices().get(FileCollectionFactory.class);
     }
 
-    public void reportTaskProperties(TaskInternal task) {
-        System.out.println();
-        System.out.println("Task " + task.getIdentityPath() + " with type " + GeneratedSubclasses.unpackType(task));
+    public void reportTaskPropertiesForTaskGraph(TaskInternal task, Set<Task> dependencies) {
+        taskHeader(task);
+        System.out.println("dependencies:");
+        for (Task dependency : dependencies) {
+            System.out.println(((TaskInternal) dependency).getIdentityPath());
+        }
+        reportTaskProperties(task, false);
+    }
+
+    public void reportTaskPropertiesForExecution(TaskInternal task) {
+        taskHeader(task);
+        reportTaskProperties(task, true);
+    }
+
+    private void reportTaskProperties(TaskInternal task, boolean showFileCollectionContents) {
         propertyWalker.visitProperties(task, TypeValidationContext.NOOP, new PropertyVisitor.Adapter() {
             @Override
             public void visitInputFileProperty(String propertyName, boolean optional, boolean skipWhenEmpty, DirectorySensitivity directorySensitivity, boolean incremental, @Nullable Class<? extends FileNormalizer> fileNormalizer, PropertyValue value, InputFilePropertyType filePropertyType) {
@@ -53,15 +71,27 @@ public class TaskDiagnostics {
                 reportProperty("Output file", propertyName, value);
             }
 
-            private void reportProperty(String type, String propertyName, PropertyValue value) {
+            private void reportProperty(String type, String propertyName, PropertyValue propertyValue) {
                 System.out.println();
                 System.out.println(type + " property " + task.getIdentityPath() + ':' + propertyName);
-                Object currentValue = value.getUnprocessedValue();
+                System.out.println("spec:");
+                Object value = propertyValue.getUnprocessedValue();
                 TreeFormatter formatter = new TreeFormatter();
-                describeTo(currentValue, formatter);
+                describeTo(value, formatter);
                 System.out.println(formatter.toString());
+                if (showFileCollectionContents && propertyValue.call() != null) {
+                    System.out.println("contents:");
+                    for (File file : fileCollectionFactory.resolving(propertyValue)) {
+                        System.out.println(file);
+                    }
+                }
             }
         });
+    }
+
+    private void taskHeader(TaskInternal task) {
+        System.out.println();
+        System.out.println("Task " + task.getIdentityPath() + " with type " + GeneratedSubclasses.unpackType(task));
     }
 
     private static void describeTo(@Nullable Object value, TreeFormatter formatter) {
