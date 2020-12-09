@@ -188,7 +188,7 @@ interface BuildTypeBucket {
     fun getDescription(testCoverage: TestCoverage): String = throw UnsupportedOperationException()
 }
 
-data class GradleSubproject(val name: String, val unitTests: Boolean = true, val functionalTests: Boolean = true, val crossVersionTests: Boolean = false, val containsSlowTests: Boolean = false) : BuildTypeBucket {
+data class GradleSubproject(val name: String, val path: String, val unitTests: Boolean = true, val functionalTests: Boolean = true, val crossVersionTests: Boolean = false, val containsSlowTests: Boolean = false) : BuildTypeBucket {
     override fun createFunctionalTestsFor(model: CIBuildModel, stage: Stage, testCoverage: TestCoverage, bucketIndex: Int): FunctionalTest {
         val uuid = if (containsSlowTests) testCoverage.asConfigurationId(model, name.kebabCaseToCamelCase()) else getUuid(model, testCoverage, bucketIndex)
         return FunctionalTest(model,
@@ -214,8 +214,6 @@ data class GradleSubproject(val name: String, val unitTests: Boolean = true, val
     override fun getDescription(testCoverage: TestCoverage) = "${testCoverage.asName()} for $name"
 
     fun hasTestsOf(testType: TestType) = (unitTests && testType.unitTests) || (functionalTests && testType.functionalTests) || (crossVersionTests && testType.crossVersionTests)
-
-    fun asDirectoryName() = name.replace(Regex("([A-Z])")) { "-" + it.groups[1]!!.value.toLowerCase() }
 }
 
 interface StageName {

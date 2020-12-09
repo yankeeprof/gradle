@@ -52,9 +52,10 @@ data class JsonBasedGradleSubprojectProvider(private val jsonFile: File) : Gradl
     private
     fun toSubproject(subproject: Map<String, Object>): GradleSubproject {
         val name = subproject["name"] as String
+        val path = subproject["path"] as String
         val unitTests = !ignoredSubprojects.contains(name) && subproject["unitTests"] as Boolean
         val functionalTests = !ignoredSubprojects.contains(name) && subproject["functionalTests"] as Boolean
         val crossVersionTests = !ignoredSubprojects.contains(name) && subproject["crossVersionTests"] as Boolean
-        return GradleSubproject(name, unitTests, functionalTests, crossVersionTests, name in slowSubprojects)
+        return GradleSubproject(name, path, unitTests, functionalTests, crossVersionTests, name in slowSubprojects)
     }
 }

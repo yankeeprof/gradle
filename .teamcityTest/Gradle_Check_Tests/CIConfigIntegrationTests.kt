@@ -228,7 +228,7 @@ class CIConfigIntegrationTests {
 
     @Test
     fun allSubprojectsAreListed() {
-        val knownSubProjectNames = model.subprojects.subprojects.map { it.asDirectoryName() }
+        val knownSubProjectNames = model.subprojects.subprojects.map { it.name }
         subProjectFolderList().forEach {
             assertTrue(
                 it.name in knownSubProjectNames,
@@ -243,7 +243,7 @@ class CIConfigIntegrationTests {
         assertEquals(uuidList.distinct(), uuidList)
     }
 
-    private fun getSubProjectFolder(subProject: GradleSubproject): File = File("../subprojects/${subProject.asDirectoryName()}")
+    private fun getSubProjectFolder(subProject: GradleSubproject): File = File("../${subProject.path.replace(":", "/")}")
 
     @Test
     fun testsAreCorrectlyConfiguredForAllSubProjects() {
@@ -266,7 +266,7 @@ class CIConfigIntegrationTests {
         }
         assertFalse(projectFoldersWithUnitTests.isEmpty())
         projectFoldersWithUnitTests.forEach {
-            assertTrue(projectsWithUnitTests.map { it.asDirectoryName() }.contains(it.name), "Contains unit tests: $it")
+            assertTrue(projectsWithUnitTests.map { it.name }.contains(it.name), "Contains unit tests: $it")
         }
     }
 
@@ -293,7 +293,7 @@ class CIConfigIntegrationTests {
         }
         assertFalse(projectFoldersWithFunctionalTests.isEmpty())
         projectFoldersWithFunctionalTests.forEach {
-            assertTrue(projectsWithFunctionalTests.map { it.asDirectoryName() }.contains(it.name), "Contains functional tests: $it")
+            assertTrue(projectsWithFunctionalTests.map { it.name }.contains(it.name), "Contains functional tests: $it")
         }
     }
 
@@ -303,7 +303,7 @@ class CIConfigIntegrationTests {
         val projectFoldersWithCrossVersionTests = subProjectFolderList().filter { File(it, "src/crossVersionTest").exists() }
         assertFalse(projectFoldersWithCrossVersionTests.isEmpty())
         projectFoldersWithCrossVersionTests.forEach {
-            assertTrue(projectsWithCrossVersionTests.map { it.asDirectoryName() }.contains(it.name), "Contains cross-version tests: $it")
+            assertTrue(projectsWithCrossVersionTests.map { it.name }.contains(it.name), "Contains cross-version tests: $it")
         }
     }
 
