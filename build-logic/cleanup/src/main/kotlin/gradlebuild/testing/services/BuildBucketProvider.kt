@@ -72,6 +72,7 @@ abstract class BuildBucketProvider : BuildService<BuildBucketProvider.Params> {
 
 
     interface BuildBucketProvider {
+        fun configureUnitTestTask(testTask: Test) {}
         fun configureTest(testTask: Test, sourceSet: SourceSet, testType: TestType)
     }
 
@@ -109,6 +110,11 @@ abstract class BuildBucketProvider : BuildService<BuildBucketProvider.Params> {
             } else {
                 testTask.filter.includePatterns.addAll(classesForSourceSet)
             }
+        }
+
+        override fun configureUnitTestTask(testTask: Test) {
+            // Only run unit test in the last bucket (the exclude bucket)
+            testTask.enabled = false
         }
     }
 
