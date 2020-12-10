@@ -54,7 +54,7 @@ dependencies {
     implementation(libs.ivy)
     implementation(libs.ant)
     implementation(libs.jgit) {
-        because("Some tests require a git reportitory - see AbstractIntegrationSpec.initGitDir(")
+        because("Some tests require a git repository - see AbstractIntegrationSpec.initGitDir(")
     }
 
     // we depend on both: sshd platforms and libraries
