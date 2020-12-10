@@ -52,26 +52,24 @@ public class TaskDiagnostics {
         return "true".equals(System.getenv("GRADLE_TASK_DIAGNOSTICS"));
     }
 
-    private final File logFile;
+    private final GradleInternal gradleInternal;
+    private final String logFileName;
 
     private final PropertyWalker propertyWalker;
     private final FileCollectionFactory fileCollectionFactory;
     private final Stat stat;
 
     public TaskDiagnostics(GradleInternal gradleInternal) {
-        logFile = resolveLogFile(gradleInternal);
+        this.gradleInternal = gradleInternal;
+        logFileName = "task-diagnostics-" + gradleInternal.getServices().get(BuildInvocationScopeId.class).getId().asString() + ".log";
+
         propertyWalker = gradleInternal.getServices().get(PropertyWalker.class);
         fileCollectionFactory = gradleInternal.getServices().get(FileCollectionFactory.class);
         stat = gradleInternal.getServices().get(Stat.class);
     }
 
-    private File resolveLogFile(GradleInternal gradleInternal) {
-        String buildInvocationId = gradleInternal.getServices().get(BuildInvocationScopeId.class).getId().asString();
-        File rootDir = gradleInternal.getRoot().getRootProject().getProjectDir();
-        return new File(rootDir, "task-diagnostics-" + buildInvocationId + ".log");
-    }
-
     private synchronized void writingLogs(Action<PrintWriter> action) {
+        File logFile = new File(gradleInternal.getRoot().getRootProject().getProjectDir(), logFileName);
         try (FileOutputStream output = new FileOutputStream(logFile, true)) {
             action.execute(new PrintWriter(output));
         } catch (IOException e) {
