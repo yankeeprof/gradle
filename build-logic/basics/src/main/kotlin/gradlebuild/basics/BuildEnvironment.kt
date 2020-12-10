@@ -35,7 +35,7 @@ private
 fun Directory.parentOrRoot(): Directory = if (this.file("version.txt").asFile.exists()) {
     this
 } else {
-    val parent == dir("..")
+    val parent = dir("..")
     if (parent.file("version.txt").asFile.exists()) {
         parent
     } else if (this == parent) {
