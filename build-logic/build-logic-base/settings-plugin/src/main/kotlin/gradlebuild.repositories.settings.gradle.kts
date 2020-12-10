@@ -25,8 +25,8 @@ pluginManagement {
         maven { url = uri("https://repo.gradle.org/gradle/libs-releases") }
         maven { url = uri("https://repo.gradle.org/gradle/enterprise-libs-release-candidates-local") }
     }
-    includeBuild(location("build-logic-commons"))
-    includeBuild(location("build-logic"))
+    includeBuild(location("build-logic/build-logic-commons"))
+    includeBuild(location("build-logic/build-logic"))
 }
 
 fun location(path: String): String = when {
@@ -39,6 +39,12 @@ fun location(path: String): String = when {
     else -> {
         location("../$path")
     }
+}
+
+rootDir.listFiles(File::isDirectory)!!.filter {
+    (File(it, "build.gradle.kts").exists() || File(it, "build.gradle").exists()) && !File(it, "settings.gradle.kts").exists()
+}.forEach {
+    include(it.name)
 }
 
 dependencyResolutionManagement {
