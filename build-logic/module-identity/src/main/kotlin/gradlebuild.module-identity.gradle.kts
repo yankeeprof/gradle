@@ -115,8 +115,8 @@ fun isPromotionBuild(): Boolean = gradle.startParameter.taskNames.contains("prom
 fun Project.trimmedContentsOfFile(path: String): String {
     val fileContents = providers.fileContents(repoRoot().file(path))
     println(fileContents)
-    println(fileContents.asText)
-    println(fileContents.asText.forUseAtConfigurationTime())
+    println(fileContents.asText.isPresent())
+    println(fileContents.asText.forUseAtConfigurationTime().isPresent())
 
     return providers.fileContents(repoRoot().file(path)).asText.forUseAtConfigurationTime().get().trim()
 }
