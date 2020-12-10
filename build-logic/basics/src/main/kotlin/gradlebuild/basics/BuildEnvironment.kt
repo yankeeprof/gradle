@@ -26,7 +26,10 @@ import java.lang.IllegalStateException
 fun Project.testDistributionEnabled() = providers.systemProperty("enableTestDistribution").forUseAtConfigurationTime().orNull?.toBoolean() == true
 
 
-fun Project.repoRoot() = layout.projectDirectory.parentOrRoot()
+fun Project.repoRoot() = layout.projectDirectory.apply {
+    println(this.getAsFile())
+    parentOrRoot()
+}
 
 
 private
