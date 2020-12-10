@@ -38,7 +38,7 @@ fun Directory.parentOrRoot(): Directory = if (this.file("version.txt").asFile.ex
 } else {
     dir("..").also {
         println("Search: ${it.getAsFile()}")
-        if (it == it.dir("..")) throw IllegalStateException("Cannot find 'version.txt' file in root of repository")
+        if (it == it.dir("..")) throw IllegalStateException("Cannot find 'version.txt' file in root of repository: ${it.getAsFile()}")
     }.parentOrRoot()
 }
 
