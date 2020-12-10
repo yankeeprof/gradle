@@ -27,7 +27,7 @@ fun Project.testDistributionEnabled() = providers.systemProperty("enableTestDist
 
 
 fun Project.repoRoot() = layout.projectDirectory.apply {
-    println(this.getAsFile())
+    println("Start: ${this.getAsFile()}")
     parentOrRoot()
 }
 
@@ -37,10 +37,10 @@ fun Directory.parentOrRoot(): Directory = if (this.file("version.txt").asFile.ex
     this
 } else {
     dir("..").also {
+        println("Search: ${it.getAsFile()}")
         if (it == it.dir("..")) throw IllegalStateException("Cannot find 'version.txt' file in root of repository")
     }.parentOrRoot()
 }
-
 
 object BuildEnvironment {
 
