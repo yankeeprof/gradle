@@ -118,7 +118,7 @@ fun Project.trimmedContentsOfFile(path: String): String {
     println(fileContents.asText)
     println(fileContents.asText.forUseAtConfigurationTime())
 
-    providers.fileContents(repoRoot().file(path)).asText.forUseAtConfigurationTime().get().trim()
+    return providers.fileContents(repoRoot().file(path)).asText.forUseAtConfigurationTime().get().trim()
 }
 
 fun Project.environmentVariable(variableName: String): Provider<String> =
