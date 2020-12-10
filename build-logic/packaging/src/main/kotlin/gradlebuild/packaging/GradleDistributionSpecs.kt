@@ -93,14 +93,14 @@ object GradleDistributionSpecs {
             fileMode = Integer.parseInt("0755", 8)
         }
         from(repoRoot()) {
-            listOf("build-logic-commons", "build-logic-commons/*", "build-logic", "build-logic/*", "subprojects/*").forEach {
+            listOf("build-logic-commons", "build-logic-commons/*", "build-logic", "build-logic/*", "subprojects", "subprojects/*").forEach {
                 include("$it/*.gradle")
                 include("$it/*.gradle.kts")
+                include("$it/gradle.properties")
                 include("$it/src/")
             }
             include("*.gradle.kts")
             include("gradle.properties")
-            include("build-logic/gradle.properties")
             include("gradle/")
             include("wrapper/")
             include("gradlew.bat")
