@@ -33,10 +33,14 @@ fun Project.repoRoot() = layout.projectDirectory.apply {
 
 private
 fun Directory.parentOrRoot(): Directory = if (this.file("version.txt").asFile.exists()) {
+    println("Search ${this.asFile}")
+    println("Return ${this.asFile}")
     this
 } else {
     val parent = dir("..")
+    println("Search ${parent.asFile}")
     if (parent.file("version.txt").asFile.exists()) {
+        println("Return ${parent.asFile}")
         parent
     } else if (this == parent) {
         throw IllegalStateException("Cannot find 'version.txt' file in root of repository")
