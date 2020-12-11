@@ -30,7 +30,6 @@ import org.gradle.api.internal.FeaturePreviews;
 import org.gradle.api.internal.file.FileOperations;
 import org.gradle.api.internal.file.FileTreeInternal;
 import org.gradle.api.internal.file.TemporaryFileProvider;
-import org.gradle.api.internal.tasks.JavaToolChainFactory;
 import org.gradle.api.internal.tasks.compile.CleaningJavaCompiler;
 import org.gradle.api.internal.tasks.compile.CompilationSourceDirs;
 import org.gradle.api.internal.tasks.compile.CompilerForkUtils;
@@ -376,17 +375,6 @@ public class GroovyCompile extends AbstractCompile implements HasCompileOptions 
     }
 
     /**
-     * We need to track the toolchain used by the Groovy compiler to compile Java sources.
-     *
-     * @since 4.0
-     */
-    @Nested
-    @Deprecated
-    protected org.gradle.jvm.toolchain.JavaToolChain getJavaToolChain() {
-        return getJavaToolChainFactory().forCompileOptions(getOptions());
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -446,11 +434,6 @@ public class GroovyCompile extends AbstractCompile implements HasCompileOptions 
     @Optional
     public Property<JavaLauncher> getJavaLauncher() {
         return javaLauncher;
-    }
-
-    @Inject
-    protected JavaToolChainFactory getJavaToolChainFactory() {
-        throw new UnsupportedOperationException();
     }
 
     @Inject
