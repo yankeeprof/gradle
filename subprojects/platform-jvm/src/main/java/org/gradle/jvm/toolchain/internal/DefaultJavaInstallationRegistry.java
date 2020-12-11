@@ -96,12 +96,12 @@ public class DefaultJavaInstallationRegistry implements JavaInstallationRegistry
     }
 
     private void warnAboutDeprecation() {
-        DeprecationLogger
-            .deprecate("Using JavaInstallationRegistry to detect Java installations")
-            .withAdvice("Consider using Java Toolchains instead.")
-            .willBeRemovedInGradle7()
-            .withUserManual("toolchains")
-            .nagUser();
+//        DeprecationLogger
+//            .deprecate("Using JavaInstallationRegistry to detect Java installations")
+//            .withAdvice("Consider using Java Toolchains instead.")
+//            .willBeRemovedInGradle7()
+//            .withUserManual("toolchains")
+//            .nagUser();
     }
 
     @Contextual
