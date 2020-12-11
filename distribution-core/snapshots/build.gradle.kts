@@ -31,7 +31,7 @@ dependencies {
     testFixturesImplementation(project(":file-collections"))
     testFixturesImplementation(libs.commonsIo)
 
-    integTestDistributionRuntimeOnly(project(":distributions-core"))
+    integTestDistributionRuntimeOnly("org.gradle:distributions-core")
 }
 
 // This is a workaround for the validate plugins task trying to inspect classes which have changed but are NOT tasks.

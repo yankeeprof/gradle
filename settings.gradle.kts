@@ -1,5 +1,5 @@
 pluginManagement {
-    includeBuild("build-logic-base")
+    includeBuild("build-logic/build-logic-base")
 }
 
 plugins {
@@ -7,6 +7,16 @@ plugins {
     id("gradlebuild.repositories")
 }
 
-includeBuild("subprojects")
-
 rootProject.name = "gradle"
+
+includeBuild("distribution-core")
+includeBuild("distribution-plugins/essentials")
+includeBuild("distribution-plugins/basics")
+includeBuild("distribution-plugins/jvm")
+includeBuild("distribution-plugins/native")
+includeBuild("distribution-plugins/publishing")
+includeBuild("distribution-plugins/full")
+
+includeBuild("testing/fixtures")
+
+includeBuild("documentation")

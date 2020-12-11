@@ -25,7 +25,7 @@ dependencies {
 
     testFixturesImplementation(project(":base-services"))
 
-    integTestDistributionRuntimeOnly(project(":distributions-basics"))
+    integTestDistributionRuntimeOnly("org.gradle:distributions-basics")
 }
 
 classycle {

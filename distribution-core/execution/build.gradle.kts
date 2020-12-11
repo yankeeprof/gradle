@@ -39,5 +39,5 @@ dependencies {
     testFixturesImplementation(project(":snapshots"))
     testFixturesImplementation(project(":model-core"))
 
-    integTestDistributionRuntimeOnly(project(":distributions-core"))
+    integTestDistributionRuntimeOnly("org.gradle:distributions-core")
 }

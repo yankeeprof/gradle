@@ -79,10 +79,8 @@ fun Project.addDependenciesAndConfigurations(prefix: String) {
 
     dependencies {
         "${prefix}TestRuntimeOnly"(project.the<ExternalModulesExtension>().junit5Vintage)
-        if (name != "test") { // do not attempt to find projects during script compilation
-            "${prefix}TestImplementation"(project(":internal-integ-testing"))
-            "${prefix}TestFullDistributionRuntimeClasspath"(project(":distributions-full"))
-        }
+        "${prefix}TestImplementation"("org.gradle:internal-integ-testing")
+        "${prefix}TestFullDistributionRuntimeClasspath"("org.gradle:distributions-full")
     }
 }
 

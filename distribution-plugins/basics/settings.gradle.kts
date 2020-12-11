@@ -1,8 +1,11 @@
 pluginManagement {
-    includeBuild("../build-logic-base")
+    includeBuild("../../build-logic/build-logic-base")
 }
 
 plugins {
     id("gradlebuild.settings-plugins")
     id("gradlebuild.repositories")
 }
+
+includeBuild("../essentials")
+

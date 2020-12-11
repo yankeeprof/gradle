@@ -50,14 +50,11 @@ val testFixturesRuntimeOnly by configurations
 val testFixturesRuntimeElements by configurations
 val testFixturesApiElements by configurations
 
-// Required due to: https://github.com/gradle/gradle/issues/13278
-testFixturesRuntimeElements.extendsFrom(testFixturesRuntimeOnly)
-
 dependencies {
     if (project.name != "test") { // do not attempt to find projects during script compilation
-        testFixturesApi(project(":internal-testing"))
+        testFixturesApi("org.gradle:internal-testing")
         // platform
-        testFixturesImplementation(platform(project(":distributions-dependencies")))
+        testFixturesImplementation(platform("org.gradle:distributions-dependencies"))
     }
 
     // add a set of default dependencies for fixture implementation

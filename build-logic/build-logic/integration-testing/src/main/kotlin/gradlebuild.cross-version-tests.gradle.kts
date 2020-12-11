@@ -37,7 +37,7 @@ configureTestFixturesForCrossVersionTests()
 fun configureTestFixturesForCrossVersionTests() {
     if (name != "test") {
         dependencies {
-            "crossVersionTestImplementation"(testFixtures(project(":tooling-api")))
+            "crossVersionTestImplementation"(testFixtures("org.gradle:tooling-api"))
         }
     }
 }

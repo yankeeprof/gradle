@@ -20,9 +20,9 @@ dependencies {
     implementation(libs.commonsLang)
     implementation(libs.asm)
 
-    testFixturesApi(testFixtures(project(":diagnostics")))
     testFixturesApi(testFixtures(project(":core")))
-    testFixturesImplementation(project(":internal-integ-testing"))
+    testFixturesApi(testFixtures("org.gradle:diagnostics"))
+    testFixturesImplementation("org.gradle:internal-integ-testing")
     testFixturesImplementation(libs.guava)
 
     testImplementation(project(":process-services"))
@@ -31,12 +31,12 @@ dependencies {
     testImplementation(project(":resources"))
     testImplementation(testFixtures(project(":core-api")))
 
-    integTestImplementation(project(":platform-base"))
+    integTestImplementation("org.gradle:platform-base")
 
-    testRuntimeOnly(project(":distributions-core")) {
+    testRuntimeOnly("org.gradle:distributions-core") {
         because("Tests instantiate DefaultClassLoaderRegistry which requires a 'gradle-plugins.properties' through DefaultPluginModuleRegistry")
     }
-    integTestDistributionRuntimeOnly(project(":distributions-core"))
+    integTestDistributionRuntimeOnly("org.gradle:distributions-core")
 }
 
 strictCompile {

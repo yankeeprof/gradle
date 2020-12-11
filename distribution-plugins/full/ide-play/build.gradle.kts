@@ -19,23 +19,25 @@ val integTestRuntimeResourcesClasspath by configurations.creating {
 }
 
 dependencies {
-    implementation(project(":base-services"))
-    implementation(project(":logging"))
-    implementation(project(":core-api"))
-    implementation(project(":model-core"))
-    implementation(project(":core"))
-    implementation(project(":file-collections"))
-    implementation(project(":ide"))
-    implementation(project(":language-scala"))
-    implementation(project(":platform-base"))
-    implementation(project(":platform-jvm"))
+    implementation("org.gradle:base-services")
+    implementation("org.gradle:logging")
+    implementation("org.gradle:core-api")
+    implementation("org.gradle:model-core")
+    implementation("org.gradle:core")
+    implementation("org.gradle:file-collections")
+
+    implementation("org.gradle:ide")
+    implementation("org.gradle:language-scala")
+    implementation("org.gradle:platform-base")
+    implementation("org.gradle:platform-jvm")
+
     implementation(project(":platform-play"))
 
     implementation(libs.groovy)
     implementation(libs.guava)
 
+    integTestImplementation(testFixtures("org.gradle:ide"))
     integTestImplementation(testFixtures(project(":platform-play")))
-    integTestImplementation(testFixtures(project(":ide")))
 
     integTestRuntimeResources(testFixtures(project(":platform-play")))
 
