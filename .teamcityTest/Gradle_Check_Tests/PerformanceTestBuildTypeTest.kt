@@ -85,9 +85,9 @@ class PerformanceTestBuildTypeTest {
 
         assertEquals(
             (listOf(
-                "clean",
-                ":performance:largeTestProjectPerformanceTest --channel %performance.channel% ",
-                ":performance:smallTestProjectPerformanceTest --channel %performance.channel% ",
+                ":clean",
+                ":end-to-end-tests:performance:largeTestProjectPerformanceTest --channel %performance.channel% ",
+                ":end-to-end-tests:performance:smallTestProjectPerformanceTest --channel %performance.channel% ",
                 "extraParameters"
             ) + expectedRunnerParams).joinToString(" "),
             performanceTest.getGradleStep("GRADLE_RUNNER").gradleParams!!.trim()
