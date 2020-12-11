@@ -164,6 +164,6 @@ class GradleBuildJvmSpec implements Spec<JvmInstallationMetadata> {
     @Override
     boolean isSatisfiedBy(JvmInstallationMetadata jvm) {
         def version = jvm.languageVersion
-        return version >= JavaVersion.VERSION_1_9 && version <= JavaVersion.VERSION_11
+        return version == JavaVersion.VERSION_11
     }
 }
