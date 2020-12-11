@@ -38,6 +38,11 @@ Some plugins will break with this new version of Gradle, for example because the
 
 === Potential breaking changes
 
+==== The Play plugins have been removed
+
+The deprecated Play plugins have been removed.
+An external replacement, the link:https://gradle.github.io/playframework[Play Framework plugin], is available from the plugin portal.
+
 ==== Configuring the layout of an Ivy repository
 
 The `layout` method taking a configuration block has been removed and is replaced by link:{groovyDslPath}/org.gradle.api.artifacts.repositories.IvyArtifactRepository.html#org.gradle.api.artifacts.repositories.IvyArtifactRepository:patternLayout(org.gradle.api.Action)[patternLayout].
