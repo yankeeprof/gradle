@@ -21,7 +21,7 @@ val triggerExcludes = """
         -:.github
         -:.teamcity
         -:.teamcityTest
-        -:subprojects/docs/src/docs/release
+        -:documentation/docs/src/docs/release
     """.trimIndent()
 
 val masterReleaseBranchFilter = """

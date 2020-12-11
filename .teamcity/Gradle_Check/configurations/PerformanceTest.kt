@@ -101,6 +101,6 @@ class PerformanceTest(
 
 fun getPerformanceTestTaskNames(performanceSubProject: String, testProjects: List<String>, performanceTestTaskSuffix: String): List<String> {
     return testProjects.map {
-        ":subprojects:$performanceSubProject:$it$performanceTestTaskSuffix"
+        ":end-to-end-tests:$performanceSubProject:$it$performanceTestTaskSuffix"
     }
 }
