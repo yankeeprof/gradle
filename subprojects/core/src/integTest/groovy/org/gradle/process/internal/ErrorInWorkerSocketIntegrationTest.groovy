@@ -25,8 +25,8 @@ import spock.lang.Issue
 
 @Issue("https://github.com/gradle/gradle-private/issues/3247")
 @IgnoreIf({
-    System.out.println("os: " + OperatingSystem.current() + ": " + OperatingSystem.current().macOsX)
-    System.out.println("java version: " + JavaVersion.current() + ": " + JavaVersion.current() == JavaVersion.VERSION_1_8)
+//    System.out.println("os: " + OperatingSystem.current() + ": " + OperatingSystem.current().macOsX)
+//    System.out.println("java version: " + JavaVersion.current() + ": " + (JavaVersion.current() == JavaVersion.VERSION_1_8))
     OperatingSystem.current().macOsX && JavaVersion.current() == JavaVersion.VERSION_1_8
 })
 @IntegrationTestTimeout(180)
