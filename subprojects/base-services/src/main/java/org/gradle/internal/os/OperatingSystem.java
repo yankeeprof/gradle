@@ -59,6 +59,7 @@ public abstract class OperatingSystem {
 
     public static OperatingSystem forName(String os) {
         String osName = os.toLowerCase();
+        System.out.println("OS: " + osName);
         if (osName.contains("windows")) {
             return WINDOWS;
         } else if (osName.contains("mac os x") || osName.contains("darwin") || osName.contains("osx")) {
