@@ -26,9 +26,11 @@ import org.gradle.internal.os.OperatingSystem
 import org.gradle.util.Requires
 import org.gradle.util.TestPrecondition
 import org.junit.Assume
+import spock.lang.Ignore
 import spock.lang.IgnoreIf
 import spock.lang.Unroll
 
+@Ignore
 class JavaInstallationRegistryIntegrationTest extends AbstractIntegrationSpec {
 
     def setup() {
