@@ -96,6 +96,10 @@ See the User Manual section on the “[Feature Lifecycle](userguide/feature_life
 
 The following are the features that have been promoted in this Gradle release.
 
+In Gradle 7.0 we moved the following method out of incubation phase.
+
+- org.gradle.api.distribution.Distribution.getDistributionBaseName()
+
 <!--
 ### Example promoted
 -->
